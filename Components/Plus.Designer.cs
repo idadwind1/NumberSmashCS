@@ -1,6 +1,6 @@
 ﻿namespace NumberGamePlus.Components
 {
-    partial class Number
+    partial class Plus
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,37 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.number_cbx = new System.Windows.Forms.CheckBox();
+            this.plus_lbl = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // number_cbx
+            // plus_lbl
             // 
-            this.number_cbx.Appearance = System.Windows.Forms.Appearance.Button;
-            this.number_cbx.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.number_cbx.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.number_cbx.Location = new System.Drawing.Point(0, 0);
-            this.number_cbx.Name = "number_cbx";
-            this.number_cbx.Size = new System.Drawing.Size(148, 119);
-            this.number_cbx.TabIndex = 1;
-            this.number_cbx.Text = "checkBox1";
-            this.number_cbx.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.number_cbx.UseVisualStyleBackColor = true;
-            this.number_cbx.CheckedChanged += new System.EventHandler(this.number_cbx_CheckedChanged);
+            this.plus_lbl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.plus_lbl.Location = new System.Drawing.Point(0, 0);
+            this.plus_lbl.Name = "plus_lbl";
+            this.plus_lbl.Size = new System.Drawing.Size(150, 150);
+            this.plus_lbl.TabIndex = 0;
+            this.plus_lbl.Text = "+";
+            this.plus_lbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // Number
+            // Plus
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSize = true;
-            this.Controls.Add(this.number_cbx);
-            this.Name = "Number";
-            this.Size = new System.Drawing.Size(148, 119);
-            this.Resize += new System.EventHandler(this.Number_Resize);
+            this.Controls.Add(this.plus_lbl);
+            this.Name = "Plus";
+            this.Resize += new System.EventHandler(this.Plus_Resize);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-        private System.Windows.Forms.CheckBox number_cbx;
+
+        private System.Windows.Forms.Label plus_lbl;
     }
 }

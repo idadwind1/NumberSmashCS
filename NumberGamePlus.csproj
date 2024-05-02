@@ -46,11 +46,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Algorithms\Algorithms.cs" />
+    <Compile Include="Components\Equation.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Equation.Designer.cs">
+      <DependentUpon>Equation.cs</DependentUpon>
+    </Compile>
     <Compile Include="Components\Number.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Components\Number.Designer.cs">
       <DependentUpon>Number.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Plus.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Plus.Designer.cs">
+      <DependentUpon>Plus.cs</DependentUpon>
     </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -60,8 +73,14 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Components\Equation.resx">
+      <DependentUpon>Equation.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Components\Number.resx">
       <DependentUpon>Number.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\Plus.resx">
+      <DependentUpon>Plus.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -88,5 +107,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
