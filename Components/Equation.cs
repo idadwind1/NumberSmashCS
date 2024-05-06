@@ -17,13 +17,13 @@ namespace NumberGamePlus.Components
         public Equation()
         {
             InitializeComponent();
-            foreach (var ctrl in tableLayoutPanel1.Controls)
+            /*foreach (var ctrl in tableLayoutPanel1.Controls)
             {
                 if (ctrl is Number number)
                     Numbers.Add(number);
                 if (ctrl is Plus plus)
                     Pluses.Add(plus);
-            }
+            }*/
         }
 
         public Random RandomGenerator
@@ -183,6 +183,7 @@ namespace NumberGamePlus.Components
 
         private int _Sum;
 
+        [Browsable(false)]
         public int Sum
         {
             get => _Sum;
@@ -191,6 +192,7 @@ namespace NumberGamePlus.Components
 
         private int _MaxSum;
 
+        [Browsable(false)]
         public int MaxSum
         {
             get => _MaxSum;
@@ -199,6 +201,7 @@ namespace NumberGamePlus.Components
 
         private int _MinSum;
 
+        [Browsable(false)]
         public int MinSum
         {
             get => _MinSum;

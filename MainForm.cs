@@ -40,12 +40,12 @@ namespace NumberGamePlus
         {
             InitializeComponent();
             RandomGenerator = new Random();
-            equation.RandomGenerator = RandomGenerator;
+            //equation.RandomGenerator = RandomGenerator;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            equation.InitNumbers();
+            //equation.InitNumbers();
             timer1.Start();
         }
 
@@ -229,7 +229,7 @@ namespace NumberGamePlus
                 equation.SelectedItems = equation.Numbers.ToArray();
                 return;
             }
-            equation.SelectedItems = new Components.Number[] { };
+            equation.SelectedItems = new Number[] { };
         }
 
         private void Pause(bool toggle)
