@@ -17,15 +17,18 @@ namespace NumberGamePlus.Components
         public Equation()
         {
             InitializeComponent();
-            /*foreach (var ctrl in tableLayoutPanel1.Controls)
+            foreach (var ctrl in tableLayoutPanel1.Controls)
             {
                 if (ctrl is Number number)
                     Numbers.Add(number);
                 if (ctrl is Plus plus)
                     Pluses.Add(plus);
-            }*/
+            }
         }
 
+        private Random _RandomGenerator;
+
+        [Browsable(false), ReadOnly(true)]
         public Random RandomGenerator
         {
             get => _RandomGenerator;
@@ -42,7 +45,7 @@ namespace NumberGamePlus.Components
 
         private List<int> _SelectedIndices = new List<int>();
 
-        [Browsable(false)]
+        [Browsable(false), ReadOnly(true)]
         public int[] SelectedIndices
         {
             get => SelectedIndices;
@@ -56,7 +59,7 @@ namespace NumberGamePlus.Components
 
         private List<Number> _SelectedItems = new List<Number>();
 
-        [Browsable(false)]
+        [Browsable(false), ReadOnly(true)]
         public Number[] SelectedItems
         {
             get => _SelectedItems.ToArray();
@@ -72,14 +75,12 @@ namespace NumberGamePlus.Components
 
         private int _SelectedSum = int.MinValue;
 
-        [Browsable(false)]
-        internal int SelectedSum
+        [Browsable(false), ReadOnly(true)]
+        public int SelectedSum
         {
             get => _SelectedSum;
-            set => throw new ReadOnlyException();
+            private set => throw new ReadOnlyException();
         }
-
-        private Random _RandomGenerator;
 
         public delegate void SelectedItemsChangedHandle(object sender, EventArgs e);
 
@@ -155,7 +156,7 @@ namespace NumberGamePlus.Components
 
         private List<int> _Values = new List<int>();
 
-        [Browsable(false)]
+        [Browsable(false), ReadOnly(true)]
         public int[] Values
         {
             get => _Values.ToArray();
@@ -183,29 +184,29 @@ namespace NumberGamePlus.Components
 
         private int _Sum;
 
-        [Browsable(false)]
+        [Browsable(false), ReadOnly(true)]
         public int Sum
         {
             get => _Sum;
-            set => throw new ReadOnlyException();
+            private set => throw new ReadOnlyException();
         }
 
         private int _MaxSum;
 
-        [Browsable(false)]
+        [Browsable(false), ReadOnly(true)]
         public int MaxSum
         {
             get => _MaxSum;
-            set => throw new ReadOnlyException();
+            private set => throw new ReadOnlyException();
         }
 
         private int _MinSum;
 
-        [Browsable(false)]
+        [Browsable(false), ReadOnly(true)]
         public int MinSum
         {
             get => _MinSum;
-            set => throw new ReadOnlyException();
+            private set => throw new ReadOnlyException();
         }
     }
 }

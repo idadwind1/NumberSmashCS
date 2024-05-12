@@ -40,12 +40,12 @@ namespace NumberGamePlus
         {
             InitializeComponent();
             RandomGenerator = new Random();
-            //equation.RandomGenerator = RandomGenerator;
+            equation.RandomGenerator = RandomGenerator;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            //equation.InitNumbers();
+            equation.InitNumbers();
             timer1.Start();
         }
 
@@ -133,6 +133,7 @@ namespace NumberGamePlus
                     n.Selected = false;
                 }
                 Score++;
+                toolStripProgressBarTime.Value = 0;
                 return;
             }
             Lose(string.Format("{0} = {1} ≠ 0",
@@ -158,11 +159,14 @@ namespace NumberGamePlus
             timing_lbl.Text = "0:00";
             pause_lbl.Text = "Game Paused";
             pause_lbl.Visible = false;
-            equation.SelectedItems = new Components.Number[] { };
+            equation.SelectedItems = new Number[] { };
             equation.InitNumbers();
             SetEnabled(this, true, null);
-            SetMenuStripEnabled(menuStrip1, true, null);
+            SetMenuStripEnabled(menuStrip1, true, null, null);
             game_over = false;
+            if (!timer1.Enabled)
+                timer1.Start();
+            toolStripProgressBarTime.Value = 0;
         }
 
         private void equation_SelectedItemsChanged(object sender, EventArgs e)
@@ -260,17 +264,30 @@ namespace NumberGamePlus
                 showSumToolStripMenuItem
             };
             SetEnabled(this, !toggle, exclusive);
-            SetMenuStripEnabled(menuStrip1, !toggle, exclusive_tsmi);
+            SetMenuStripEnabled(menuStrip1, !toggle, exclusive_tsmi, null);
             pause_lbl.Visible = toggle;
             equation.Visible = !toggle;
+            pause_cbx.Checked = toggle;
             if (toggle) timer1.Stop();
             else timer1.Start();
         }
 
-        private void SetMenuStripEnabled(ToolStripMenuItem root, bool value, ToolStripMenuItem[] exclusive)
+        private void SetMenuStripEnabled(ToolStripMenuItem root, bool value, ToolStripMenuItem[] exclusive, ToolStripTextBox[] exclusive_tb)
         {
-            foreach (ToolStripMenuItem tsmi in root.DropDownItems)
-                SetMenuStripEnabled(tsmi, value, exclusive);
+            foreach (var obj in root.DropDownItems)
+                if (obj is ToolStripMenuItem tsmi)
+                    SetMenuStripEnabled(tsmi, value, exclusive, exclusive_tb);
+                else if (obj is ToolStripTextBox tstb)
+                {
+                    if (exclusive_tb == null)
+                    {
+                        tstb.Enabled = value;
+                        return;
+                    }
+                    foreach (var e in exclusive_tb)
+                        if (tstb == e) return;
+                    tstb.Enabled = value;
+                }
             if (exclusive == null)
             {
                 root.Enabled = value;
@@ -281,10 +298,10 @@ namespace NumberGamePlus
             root.Enabled = value;
         }
 
-        private void SetMenuStripEnabled(MenuStrip root, bool value, ToolStripMenuItem[] exclusive)
+        private void SetMenuStripEnabled(MenuStrip root, bool value, ToolStripMenuItem[] exclusive, ToolStripTextBox[] exclusive_tb)
         {
             foreach (ToolStripMenuItem tsmi in root.Items)
-                SetMenuStripEnabled(tsmi, value, exclusive);
+                SetMenuStripEnabled(tsmi, value, exclusive, exclusive_tb);
         }
 
         private void SetEnabled(Control root, bool value, Control[] exclusive)
@@ -327,6 +344,16 @@ namespace NumberGamePlus
                 seconds++;
                 timing_lbl.Text = string.Format("{0}:{1:00}", seconds / 60, seconds % 60);
                 hundred_milliseconds = 0;
+                if (timingToolStripMenuItem.Checked)
+                {
+                    if (toolStripProgressBarTime.Value < timing)
+                    {
+                        toolStripProgressBarTime.Value++;
+                        toolStripStatusTime.Text = string.Format("Time Remaining: {0}s", timing - toolStripProgressBarTime.Value);
+                    }
+                    else
+                        Invoke(new Action(() => Lose("Time is up!")));
+                }
             }
         }
 
@@ -362,12 +389,70 @@ namespace NumberGamePlus
                 showSumToolStripMenuItem
             };
             SetEnabled(this, false, exclusive);
-            SetMenuStripEnabled(menuStrip1, false, exclusive_tsmi);
-            equation.SelectedItems = new Components.Number[] { };
+            SetMenuStripEnabled(menuStrip1, false, exclusive_tsmi, null);
+            equation.SelectedItems = new Number[] { };
             pause_lbl.Text = "Game Over\n" + reason;
             pause_lbl.Visible = game_over = true;
             timer1.Stop();
+            if (bSoDWhenLoseToolStripMenuItem.Checked) Algorithms.Algorithms.BSoD();
         }
+
         bool game_over = false;
+
+        private void toolStripTextBoxTiming_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar <= '9' && e.KeyChar >= '0') return;
+            if (e.KeyChar == '\b') return;
+            e.Handled = true;
+        }
+
+        int timing = 10;
+
+        private void timingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timingToolStripMenuItem.Text = "Timing" + (timingToolStripMenuItem.Checked ? " (s):" : "");
+            toolStripTextBoxTiming.Visible = 
+                toolStripProgressBarTime.Visible = 
+                toolStripStatusTime.Visible = timingToolStripMenuItem.Checked;
+        }
+
+        private void toolStripTextBoxTiming_TextChanged(object sender, EventArgs e)
+        {
+            if (timingToolStripMenuItem.Checked)
+            {
+                toolStripProgressBarTime.Value = 0;
+                int.TryParse(toolStripTextBoxTiming.Text, out timing);
+                toolStripProgressBarTime.Maximum = timing;
+            }
+        }
+
+        private void bSoDWhenLoseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (bSoDWhenLoseToolStripMenuItem.Checked)
+            {
+                bSoDWhenLoseToolStripMenuItem.Checked = false;
+                return;
+            }
+            Pause(true);
+            System.Security.Principal.WindowsIdentity identity = System.Security.Principal.WindowsIdentity.GetCurrent();
+            System.Security.Principal.WindowsPrincipal principal = new System.Security.Principal.WindowsPrincipal(identity);
+            if (!principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator))
+            {
+                MessageBox.Show("Please run this program as administrator before using this function", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Pause(false);
+                return;
+            }
+            if (MessageBox.Show("WARNING (Better read this): \n" +
+                "IN THIS SOFTWARE (that not all softwares are as kind as this), BSoD refers to " +
+                "'let the device to panic by making a manual error, but the action DOES NOT actually damage your OS'." +
+                "To restore, simply reboot your OS. Though it does nothing to your OS, you still need to opt wisely, due to this action " +
+                "MAY EFFECT the operation of other software by effort them to terminate!" +
+                "So in purpose of reduce damage, please save and quit other software running.\n" +
+                "IT IS NOT MY FAULT IF YOU DID NOT READ THIS.\n" +
+                "Click 'OK' to proceed. Before you lose, you can turn off this function whenever you regrets.\n" +
+                "This action may be blocked by anti-virvus applications.", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.Cancel) return;
+            bSoDWhenLoseToolStripMenuItem.Checked = true;
+            Pause(false);
+        }
     }
 }

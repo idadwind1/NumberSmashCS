@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Markup;
 
@@ -34,6 +37,8 @@ namespace NumberGamePlus.Components
             set => number_cbx.Checked = value;
         }
 
+        public bool ExtendedFeaturesToggle = false;
+
         public Random RandomGenerator
         {
             get => _RandomGenerator;
@@ -44,6 +49,7 @@ namespace NumberGamePlus.Components
                 InitNumber();
             }
         }
+
         private Random _RandomGenerator;
 
         public void InitNumber()
@@ -54,6 +60,25 @@ namespace NumberGamePlus.Components
                 number_cbx.Text = string.Format("({0})", random);
             else
                 number_cbx.Text = random.ToString();
+            return;
+            /*var possibilities = Enumerable.Repeat(0, 91).ToList();
+            possibilities.AddRange(Enumerable.Repeat(1,5));
+            possibilities.AddRange(Enumerable.Range(2, 4));
+            var value = possibilities[RandomGenerator.Next(possibilities.Count)];
+            switch(value)
+            {
+                case 0: //Norm
+                    InitNumber(false);
+                    break;
+                case 1: //Signum
+                    Value =
+                    break;
+                case 2: //Infinitive
+                    Value = int.MinValue;
+                    break;
+                case 3: //Double
+
+            }*/
         }
 
         public Number()

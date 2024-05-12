@@ -42,13 +42,16 @@
             this.topMostToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showSumToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.timingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripTextBoxTiming = new System.Windows.Forms.ToolStripTextBox();
+            this.bSoDWhenLoseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.byToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBarSumAbs = new System.Windows.Forms.ToolStripProgressBar();
             this.toolStripStatusLabelSumAbs = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripProgressBar2 = new System.Windows.Forms.ToolStripProgressBar();
-            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripProgressBarTime = new System.Windows.Forms.ToolStripProgressBar();
+            this.toolStripStatusTime = new System.Windows.Forms.ToolStripStatusLabel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBoxEquation = new System.Windows.Forms.GroupBox();
             this.pause_lbl = new System.Windows.Forms.Label();
@@ -186,7 +189,10 @@
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showSumToolStripMenuItem});
+            this.showSumToolStripMenuItem,
+            this.timingToolStripMenuItem,
+            this.toolStripTextBoxTiming,
+            this.bSoDWhenLoseToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(75, 26);
             this.optionsToolStripMenuItem.Text = "&Options";
@@ -195,9 +201,35 @@
             // 
             this.showSumToolStripMenuItem.CheckOnClick = true;
             this.showSumToolStripMenuItem.Name = "showSumToolStripMenuItem";
-            this.showSumToolStripMenuItem.Size = new System.Drawing.Size(161, 26);
+            this.showSumToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.showSumToolStripMenuItem.Text = "&Show Sum";
             this.showSumToolStripMenuItem.Click += new System.EventHandler(this.showSumToolStripMenuItem_Click);
+            // 
+            // timingToolStripMenuItem
+            // 
+            this.timingToolStripMenuItem.CheckOnClick = true;
+            this.timingToolStripMenuItem.Name = "timingToolStripMenuItem";
+            this.timingToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.timingToolStripMenuItem.Text = "Timing";
+            this.timingToolStripMenuItem.Click += new System.EventHandler(this.timingToolStripMenuItem_Click);
+            // 
+            // toolStripTextBoxTiming
+            // 
+            this.toolStripTextBoxTiming.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.toolStripTextBoxTiming.Name = "toolStripTextBoxTiming";
+            this.toolStripTextBoxTiming.Size = new System.Drawing.Size(100, 27);
+            this.toolStripTextBoxTiming.Text = "10";
+            this.toolStripTextBoxTiming.Visible = false;
+            this.toolStripTextBoxTiming.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.toolStripTextBoxTiming_KeyPress);
+            this.toolStripTextBoxTiming.TextChanged += new System.EventHandler(this.toolStripTextBoxTiming_TextChanged);
+            // 
+            // bSoDWhenLoseToolStripMenuItem
+            // 
+            this.bSoDWhenLoseToolStripMenuItem.ForeColor = System.Drawing.Color.Red;
+            this.bSoDWhenLoseToolStripMenuItem.Name = "bSoDWhenLoseToolStripMenuItem";
+            this.bSoDWhenLoseToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.bSoDWhenLoseToolStripMenuItem.Text = "BSoD When Lose";
+            this.bSoDWhenLoseToolStripMenuItem.Click += new System.EventHandler(this.bSoDWhenLoseToolStripMenuItem_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -226,8 +258,8 @@
             this.byToolStripStatusLabel,
             this.toolStripProgressBarSumAbs,
             this.toolStripStatusLabelSumAbs,
-            this.toolStripProgressBar2,
-            this.toolStripStatusLabel2});
+            this.toolStripProgressBarTime,
+            this.toolStripStatusTime});
             this.statusStrip1.Location = new System.Drawing.Point(0, 211);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(745, 25);
@@ -255,18 +287,19 @@
             this.toolStripStatusLabelSumAbs.Text = "Sum: 0";
             this.toolStripStatusLabelSumAbs.Visible = false;
             // 
-            // toolStripProgressBar2
+            // toolStripProgressBarTime
             // 
-            this.toolStripProgressBar2.Name = "toolStripProgressBar2";
-            this.toolStripProgressBar2.Size = new System.Drawing.Size(100, 17);
-            this.toolStripProgressBar2.Visible = false;
+            this.toolStripProgressBarTime.Maximum = 10;
+            this.toolStripProgressBarTime.Name = "toolStripProgressBarTime";
+            this.toolStripProgressBarTime.Size = new System.Drawing.Size(100, 17);
+            this.toolStripProgressBarTime.Visible = false;
             // 
-            // toolStripStatusLabel2
+            // toolStripStatusTime
             // 
-            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(117, 19);
-            this.toolStripStatusLabel2.Text = "Remain Time: 0s";
-            this.toolStripStatusLabel2.Visible = false;
+            this.toolStripStatusTime.Name = "toolStripStatusTime";
+            this.toolStripStatusTime.Size = new System.Drawing.Size(138, 19);
+            this.toolStripStatusTime.Text = "Time Remaining: 0s";
+            this.toolStripStatusTime.Visible = false;
             // 
             // tableLayoutPanel2
             // 
@@ -311,19 +344,8 @@
             this.equation.Dock = System.Windows.Forms.DockStyle.Fill;
             this.equation.Location = new System.Drawing.Point(3, 18);
             this.equation.Name = "equation";
-            this.equation.RandomGenerator = null;
-            this.equation.SelectedIndices = new int[0];
-            this.equation.SelectedItems = new NumberGamePlus.Components.Number[0];
             this.equation.Size = new System.Drawing.Size(727, 60);
             this.equation.TabIndex = 0;
-            this.equation.Values = new int[] {
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0};
             this.equation.SelectedItemsChanged += new NumberGamePlus.Components.Equation.SelectedItemsChangedHandle(this.equation_SelectedItemsChanged);
             // 
             // groupBoxActions
@@ -595,8 +617,8 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripProgressBar toolStripProgressBarSumAbs;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelSumAbs;
-        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar2;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBarTime;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusTime;
         private System.Windows.Forms.ToolStripStatusLabel byToolStripStatusLabel;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.GroupBox groupBoxTiming;
@@ -607,5 +629,8 @@
         private System.Windows.Forms.GroupBox groupBoxScore;
         private System.Windows.Forms.Label score_lbl;
         private System.Windows.Forms.ToolStripMenuItem showSumToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem timingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripTextBox toolStripTextBoxTiming;
+        private System.Windows.Forms.ToolStripMenuItem bSoDWhenLoseToolStripMenuItem;
     }
 }

