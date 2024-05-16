@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Algorithms\Algorithms.cs" />
+    <Compile Include="Classes\NumberValue.cs" />
     <Compile Include="Components\Equation.cs">
       <SubType>UserControl</SubType>
     </Compile>

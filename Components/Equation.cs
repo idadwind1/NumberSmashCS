@@ -4,8 +4,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using NumberGamePlus.Classes;
 
 namespace NumberGamePlus.Components
 {
@@ -27,6 +27,19 @@ namespace NumberGamePlus.Components
         }
 
         private Random _RandomGenerator;
+
+        private bool _ExtendedFeaturesToggle = false;
+
+        public bool ExtendedFeaturesToggle
+        {
+            get => _ExtendedFeaturesToggle;
+            set
+            {
+                _ExtendedFeaturesToggle = value;
+                foreach (var number in Numbers)
+                    number.ExtendedFeaturesToggle = value;
+            }
+        }
 
         [Browsable(false), ReadOnly(true)]
         public Random RandomGenerator
@@ -78,8 +91,21 @@ namespace NumberGamePlus.Components
         [Browsable(false), ReadOnly(true)]
         public int SelectedSum
         {
-            get => _SelectedSum;
+            get
+            {
+                if (UncommonNumberSelected)
+                    throw new Exception("Uncalculatable");
+                return _SelectedSum;
+            }
             private set => throw new ReadOnlyException();
+        }
+
+        public bool IsSelected(NumberValue.NumberType type)
+        {
+            foreach (var i in Numbers)
+                if (i.Value.Type == type)
+                    return true;
+            return false;
         }
 
         public delegate void SelectedItemsChangedHandle(object sender, EventArgs e);
@@ -123,7 +149,7 @@ namespace NumberGamePlus.Components
         private void UpdateProperties(bool update_values)
         {
             Number n;
-            int n_value;
+            NumberValue n_value;
             _SelectedSum = 0;
             _SelectedItems.Clear();
             _SelectedIndices.Clear();
@@ -132,6 +158,7 @@ namespace NumberGamePlus.Components
                 _Values.Clear();
                 _MinSum = _MaxSum = _Sum = 0;
             }
+            _UncommonNumberSelected = false;
             for (var i = 0; i < Numbers.Count; i++)
             {
                 n = Numbers[i];
@@ -140,24 +167,36 @@ namespace NumberGamePlus.Components
                 {
                     _SelectedItems.Add(n);
                     _SelectedIndices.Add(i);
-                    _SelectedSum += n_value;
+                    _SelectedSum += n_value.Value;
+                    if (n_value.Type != NumberValue.NumberType.Common)
+                        _UncommonNumberSelected = true;
                 }
                 if (!update_values) continue;
                 _Values.Add(n_value);
-                _Sum += n_value;
-                if (n_value <= 0)
-                    _MinSum += n_value;
+                _Sum += n_value.Value;
+                // TODO: Rewrite
+                if (n_value.Value <= 0)
+                    _MinSum += n_value.Value;
                 else
-                    _MaxSum += n_value;
+                    _MaxSum += n_value.Value;
             }
             if (_SelectedIndices.Count <= 0)
                 _SelectedSum = int.MinValue;
         }
 
-        private List<int> _Values = new List<int>();
+        private bool _UncommonNumberSelected = false;
 
         [Browsable(false), ReadOnly(true)]
-        public int[] Values
+        public bool UncommonNumberSelected
+        {
+            get => _UncommonNumberSelected;
+            set => throw new ReadOnlyException();
+        }
+
+        private List<NumberValue> _Values = new List<NumberValue>();
+
+        [Browsable(false), ReadOnly(true)]
+        public NumberValue[] Values
         {
             get => _Values.ToArray();
             set
@@ -187,7 +226,12 @@ namespace NumberGamePlus.Components
         [Browsable(false), ReadOnly(true)]
         public int Sum
         {
-            get => _Sum;
+            get
+            {
+                if (_UncommonNumberSelected)
+                    throw new Exception("Uncalculatable");
+                return _Sum;
+            }
             private set => throw new ReadOnlyException();
         }
 

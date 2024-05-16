@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using NumberGamePlus.Classes;
+using NumberGamePlus.Components;
 
 namespace NumberGamePlus.Algorithms
 {
@@ -81,6 +86,62 @@ namespace NumberGamePlus.Algorithms
                 }
             }
             return result;
+        }
+
+        public static T Clone<T>(T RealObject)
+        {
+            using (Stream objectStream = new MemoryStream())
+            {
+                IFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(objectStream, RealObject);
+                objectStream.Seek(0, SeekOrigin.Begin);
+                return (T)formatter.Deserialize(objectStream);
+            }
+        }
+
+        public static bool Check(Equation equation)
+        {
+            if (!equation.UncommonNumberSelected)
+                return equation.SelectedSum == 0;
+            var sum = 0;
+            var possibilities = new List<List<int>>();
+            var signums = new List<int>();
+            foreach (var n in equation.SelectedItems)
+            {
+                switch (n.Value.Type)
+                {
+                    case NumberValue.NumberType.Common:
+                        sum += n.Value.Value;
+                        break;
+                    case NumberValue.NumberType.Signum:
+                        signums.Add(n.Value.Value);
+                        break;
+                    case NumberValue.NumberType.Infinitive:
+                        return true;
+                    default:
+                        break;
+                }
+            }
+            if (signums.Count <= 0)
+                return false;
+            possibilities.Add(new List<int>() { sum });
+            foreach (var sgn in signums)
+            {
+                var dup_possibilities = Clone(possibilities);
+                foreach (var poss in possibilities)
+                    poss.Add(sgn);
+                foreach (var dup_poss in dup_possibilities)
+                    dup_poss.Add(-sgn);
+                possibilities.AddRange(dup_possibilities);
+            }
+            foreach (var poss in possibilities)
+            {
+                var sum_poss = 0;
+                foreach (var num in poss)
+                    sum_poss += num;
+                if (sum_poss == 0) return true;
+            }
+            return false;
         }
     }
 }

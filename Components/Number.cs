@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Markup;
+using NumberGamePlus.Classes;
+using static NumberGamePlus.Classes.NumberValue;
 
 namespace NumberGamePlus.Components
 {
@@ -15,19 +14,20 @@ namespace NumberGamePlus.Components
         [Browsable(false)]
         public override string Text
         {
-            get => Value < 0 ? string.Format("({0})", Value) : Value.ToString();
+            get => Value.ValueString;
             set => throw new ReadOnlyException();
         }
 
-        private int _Value;
-        public int Value
+        private NumberValue _Value = new NumberValue();
+
+        [ReadOnly(true)]
+        public NumberValue Value
         {
             get => _Value;
             set
             {
                 _Value = value;
-                if (ValueChanged != null)
-                    ValueChanged(this, EventArgs.Empty);
+                ValueChanged(this, new EventArgs());
             }
         }
 
@@ -52,33 +52,49 @@ namespace NumberGamePlus.Components
 
         private Random _RandomGenerator;
 
-        public void InitNumber()
+        public void InitNumber() => InitNumber(ExtendedFeaturesToggle);
+
+        private void InitNumber(bool extended_features)
         {
-            var random = RandomGenerator.Next(-9, 9);
-            Value = random;
-            if (random < 0)
-                number_cbx.Text = string.Format("({0})", random);
-            else
-                number_cbx.Text = random.ToString();
-            return;
-            /*var possibilities = Enumerable.Repeat(0, 91).ToList();
-            possibilities.AddRange(Enumerable.Repeat(1,5));
+            var new_value = 0;
+            NumberType numberType = NumberType.Common;
+            if (!extended_features)
+            {
+                new_value = RandomGenerator.Next(-9, 10);
+                Value = new NumberValue(NumberType.Common, new_value);
+                number_cbx.Text = Value.ValueString;
+                return;
+            }
+            var possibilities = Enumerable.Repeat(0, 91).ToList();
+            possibilities.AddRange(Enumerable.Repeat(1, 5));
             possibilities.AddRange(Enumerable.Range(2, 4));
             var value = possibilities[RandomGenerator.Next(possibilities.Count)];
-            switch(value)
+            switch (value)
             {
-                case 0: //Norm
+                case 0: //Common
                     InitNumber(false);
-                    break;
+                    return;
                 case 1: //Signum
-                    Value =
+                    numberType = NumberType.Signum;
+                    new_value = RandomGenerator.Next(1, 10);
                     break;
                 case 2: //Infinitive
-                    Value = int.MinValue;
+                    numberType = NumberType.Infinitive;
                     break;
                 case 3: //Double
-
-            }*/
+                    numberType = NumberType.Double;
+                    break;
+                case 4: //Unkown
+                    numberType = NumberType.Unknown;
+                    break;
+                case 5: //NaN
+                    numberType = NumberType.Null;
+                    break;
+            }
+            if (value >= 2)
+                new_value = int.MinValue;
+            Value = new NumberValue(numberType, new_value);
+            number_cbx.Text = Value.ValueString;
         }
 
         public Number()

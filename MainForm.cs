@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Drawing;
-using System.Globalization;
 using System.Linq;
-using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using NumberGamePlus.Components;
 
@@ -113,7 +110,7 @@ namespace NumberGamePlus
                 => string.Concat(numbers.Select((l, i) => i == 0 ? l.Text : "+" + l.Text));
             if (equation.SelectedItems.Count() <= 0)
             {
-                var suitable = Algorithms.Algorithms.Get0Groups(equation.Values);
+                var suitable = Algorithms.Algorithms.Get0Groups(equation.Values.Select(v => v.Value).ToArray());
                 if (suitable.Length == 0)
                 {
                     equation.InitNumbers();
@@ -125,7 +122,8 @@ namespace NumberGamePlus
                         i.Select(j => equation.Numbers[j]).ToArray()) + "\n")));
                 return;
             }
-            if (equation.SelectedSum == 0)
+            // TODO: Add more detections
+            if (Algorithms.Algorithms.Check(equation))
             {
                 foreach (var n in equation.SelectedItems)
                 {
@@ -136,12 +134,18 @@ namespace NumberGamePlus
                 toolStripProgressBarTime.Value = 0;
                 return;
             }
+            if (equation.UncommonNumberSelected)
+            {
+                Lose(string.Format("{0} ≠ 0",
+                    ConnectNumbers(equation.SelectedItems)));
+                return;
+            }
             Lose(string.Format("{0} = {1} ≠ 0",
                 ConnectNumbers(equation.SelectedItems),
                 equation.SelectedSum));
         }
 
-        private DialogResult ShowMessageBox(string message, string title ="", MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.None)
+        private DialogResult ShowMessageBox(string message, string title = "", MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.None)
         {
             DialogResult result;
             pause_cbx.Checked = true;
@@ -189,10 +193,17 @@ namespace NumberGamePlus
 
         private void UpdateSumLabel()
         {
-            toolStripProgressBarSumAbs.Maximum = Math.Max(equation.MaxSum, Math.Abs(equation.MinSum));
-            var selected_sum = equation.SelectedSum;
             if (showSumToolStripMenuItem.Checked)
             {
+                toolStripProgressBarSumAbs.Maximum = Math.Max(equation.MaxSum, Math.Abs(equation.MinSum));
+                var selected_sum = equation.SelectedSum;
+                if (equation.UncommonNumberSelected)
+                {
+                    toolStripProgressBarSumAbs.Value = 0;
+                    toolStripStatusLabelSumAbs.Text = "Sum: NaN";
+                    toolStripStatusLabelSumAbs.ForeColor = Color.Red;
+                    return;
+                }
                 if (selected_sum == int.MinValue)
                 {
                     toolStripProgressBarSumAbs.Value = 0;
@@ -210,7 +221,7 @@ namespace NumberGamePlus
 
         private void help_btn_Click(object sender, EventArgs e)
         {
-            var suitable = Algorithms.Algorithms.Get0Groups(equation.Values);
+            var suitable = Algorithms.Algorithms.Get0Groups(equation.Values.Select(v => v.Value).ToArray());
             if (suitable.Length <= 0)
             {
                 ShowMessageBox("There is no solution!\nTry refresh", "No Solution", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -261,7 +272,10 @@ namespace NumberGamePlus
                 fontToolStripMenuItem1,
                 topMostToolStripMenuItem,
                 optionsToolStripMenuItem,
-                showSumToolStripMenuItem
+                showSumToolStripMenuItem,
+                aboutToolStripMenuItem,
+                howtoplayToolStripMenuItem1,
+                authorToolStripMenuItem
             };
             SetEnabled(this, !toggle, exclusive);
             SetMenuStripEnabled(menuStrip1, !toggle, exclusive_tsmi, null);
@@ -411,8 +425,8 @@ namespace NumberGamePlus
         private void timingToolStripMenuItem_Click(object sender, EventArgs e)
         {
             timingToolStripMenuItem.Text = "Timing" + (timingToolStripMenuItem.Checked ? " (s):" : "");
-            toolStripTextBoxTiming.Visible = 
-                toolStripProgressBarTime.Visible = 
+            toolStripTextBoxTiming.Visible =
+                toolStripProgressBarTime.Visible =
                 toolStripStatusTime.Visible = timingToolStripMenuItem.Checked;
         }
 
@@ -452,6 +466,18 @@ namespace NumberGamePlus
                 "Click 'OK' to proceed. Before you lose, you can turn off this function whenever you regrets.\n" +
                 "This action may be blocked by anti-virvus applications.", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.Cancel) return;
             bSoDWhenLoseToolStripMenuItem.Checked = true;
+            Pause(false);
+        }
+
+        private void extendedFeaturesToggleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Pause(true);
+            if (extendedFeaturesToggleToolStripMenuItem.Checked)
+                MessageBox.Show("By checking this option, the game will enable the Extended Features," +
+                    "that offers more numbers to be adding into the game.\n" +
+                    "To Apply the change, you may need to reset the game by clicking the 'Reset' button in the Actions Bar",
+                    "Tip", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            equation.ExtendedFeaturesToggle = extendedFeaturesToggleToolStripMenuItem.Checked;
             Pause(false);
         }
     }

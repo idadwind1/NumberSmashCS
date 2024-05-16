@@ -45,6 +45,10 @@
             this.timingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripTextBoxTiming = new System.Windows.Forms.ToolStripTextBox();
             this.bSoDWhenLoseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.extendedFeaturesToggleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.howtoplayToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.authorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.byToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -96,7 +100,8 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.gameToolStripMenuItem,
             this.viewToolStripMenuItem,
-            this.optionsToolStripMenuItem});
+            this.optionsToolStripMenuItem,
+            this.aboutToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(745, 30);
@@ -192,7 +197,8 @@
             this.showSumToolStripMenuItem,
             this.timingToolStripMenuItem,
             this.toolStripTextBoxTiming,
-            this.bSoDWhenLoseToolStripMenuItem});
+            this.bSoDWhenLoseToolStripMenuItem,
+            this.extendedFeaturesToggleToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(75, 26);
             this.optionsToolStripMenuItem.Text = "&Options";
@@ -201,7 +207,7 @@
             // 
             this.showSumToolStripMenuItem.CheckOnClick = true;
             this.showSumToolStripMenuItem.Name = "showSumToolStripMenuItem";
-            this.showSumToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.showSumToolStripMenuItem.Size = new System.Drawing.Size(263, 26);
             this.showSumToolStripMenuItem.Text = "&Show Sum";
             this.showSumToolStripMenuItem.Click += new System.EventHandler(this.showSumToolStripMenuItem_Click);
             // 
@@ -209,7 +215,7 @@
             // 
             this.timingToolStripMenuItem.CheckOnClick = true;
             this.timingToolStripMenuItem.Name = "timingToolStripMenuItem";
-            this.timingToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.timingToolStripMenuItem.Size = new System.Drawing.Size(263, 26);
             this.timingToolStripMenuItem.Text = "Timing";
             this.timingToolStripMenuItem.Click += new System.EventHandler(this.timingToolStripMenuItem_Click);
             // 
@@ -227,9 +233,38 @@
             // 
             this.bSoDWhenLoseToolStripMenuItem.ForeColor = System.Drawing.Color.Red;
             this.bSoDWhenLoseToolStripMenuItem.Name = "bSoDWhenLoseToolStripMenuItem";
-            this.bSoDWhenLoseToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.bSoDWhenLoseToolStripMenuItem.Size = new System.Drawing.Size(263, 26);
             this.bSoDWhenLoseToolStripMenuItem.Text = "BSoD When Lose";
             this.bSoDWhenLoseToolStripMenuItem.Click += new System.EventHandler(this.bSoDWhenLoseToolStripMenuItem_Click);
+            // 
+            // extendedFeaturesToggleToolStripMenuItem
+            // 
+            this.extendedFeaturesToggleToolStripMenuItem.CheckOnClick = true;
+            this.extendedFeaturesToggleToolStripMenuItem.Name = "extendedFeaturesToggleToolStripMenuItem";
+            this.extendedFeaturesToggleToolStripMenuItem.Size = new System.Drawing.Size(263, 26);
+            this.extendedFeaturesToggleToolStripMenuItem.Text = "Extended Features Toggle";
+            this.extendedFeaturesToggleToolStripMenuItem.Click += new System.EventHandler(this.extendedFeaturesToggleToolStripMenuItem_Click);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.howtoplayToolStripMenuItem1,
+            this.authorToolStripMenuItem});
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(64, 26);
+            this.aboutToolStripMenuItem.Text = "About";
+            // 
+            // howtoplayToolStripMenuItem1
+            // 
+            this.howtoplayToolStripMenuItem1.Name = "howtoplayToolStripMenuItem1";
+            this.howtoplayToolStripMenuItem1.Size = new System.Drawing.Size(174, 26);
+            this.howtoplayToolStripMenuItem1.Text = "&How To Play";
+            // 
+            // authorToolStripMenuItem
+            // 
+            this.authorToolStripMenuItem.Name = "authorToolStripMenuItem";
+            this.authorToolStripMenuItem.Size = new System.Drawing.Size(174, 26);
+            this.authorToolStripMenuItem.Text = "Author";
             // 
             // tableLayoutPanel1
             // 
@@ -342,6 +377,7 @@
             // equation
             // 
             this.equation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.equation.ExtendedFeaturesToggle = false;
             this.equation.Location = new System.Drawing.Point(3, 18);
             this.equation.Name = "equation";
             this.equation.Size = new System.Drawing.Size(727, 60);
@@ -632,5 +668,9 @@
         private System.Windows.Forms.ToolStripMenuItem timingToolStripMenuItem;
         private System.Windows.Forms.ToolStripTextBox toolStripTextBoxTiming;
         private System.Windows.Forms.ToolStripMenuItem bSoDWhenLoseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem extendedFeaturesToggleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem howtoplayToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem authorToolStripMenuItem;
     }
 }

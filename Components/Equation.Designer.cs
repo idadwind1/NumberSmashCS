@@ -10,7 +10,7 @@
         /// <summary> 
         /// Clean up any resources being used.
         /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        /// <param name="disposing">tru6e if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -139,7 +139,6 @@
             this.number1.Selected = false;
             this.number1.Size = new System.Drawing.Size(41, 79);
             this.number1.TabIndex = 0;
-            this.number1.Value = 0;
             this.number1.SelectedChanged += new NumberGamePlus.Components.Number.SelectedChangedHandle(this.number_SelectedChanged);
             this.number1.ValueChanged += new NumberGamePlus.Components.Number.ValueChangedHandle(this.number_ValueChanged);
             // 
@@ -155,7 +154,6 @@
             this.number2.Selected = false;
             this.number2.Size = new System.Drawing.Size(41, 79);
             this.number2.TabIndex = 1;
-            this.number2.Value = 0;
             this.number2.SelectedChanged += new NumberGamePlus.Components.Number.SelectedChangedHandle(this.number_SelectedChanged);
             this.number2.ValueChanged += new NumberGamePlus.Components.Number.ValueChangedHandle(this.number_ValueChanged);
             // 
@@ -171,7 +169,6 @@
             this.number3.Selected = false;
             this.number3.Size = new System.Drawing.Size(41, 79);
             this.number3.TabIndex = 2;
-            this.number3.Value = 0;
             this.number3.SelectedChanged += new NumberGamePlus.Components.Number.SelectedChangedHandle(this.number_SelectedChanged);
             this.number3.ValueChanged += new NumberGamePlus.Components.Number.ValueChangedHandle(this.number_ValueChanged);
             // 
@@ -187,7 +184,6 @@
             this.number4.Selected = false;
             this.number4.Size = new System.Drawing.Size(41, 79);
             this.number4.TabIndex = 3;
-            this.number4.Value = 0;
             this.number4.SelectedChanged += new NumberGamePlus.Components.Number.SelectedChangedHandle(this.number_SelectedChanged);
             this.number4.ValueChanged += new NumberGamePlus.Components.Number.ValueChangedHandle(this.number_ValueChanged);
             // 
@@ -203,7 +199,6 @@
             this.number5.Selected = false;
             this.number5.Size = new System.Drawing.Size(41, 79);
             this.number5.TabIndex = 4;
-            this.number5.Value = 0;
             this.number5.SelectedChanged += new NumberGamePlus.Components.Number.SelectedChangedHandle(this.number_SelectedChanged);
             this.number5.ValueChanged += new NumberGamePlus.Components.Number.ValueChangedHandle(this.number_ValueChanged);
             // 
@@ -219,7 +214,6 @@
             this.number6.Selected = false;
             this.number6.Size = new System.Drawing.Size(41, 79);
             this.number6.TabIndex = 5;
-            this.number6.Value = 0;
             this.number6.SelectedChanged += new NumberGamePlus.Components.Number.SelectedChangedHandle(this.number_SelectedChanged);
             this.number6.ValueChanged += new NumberGamePlus.Components.Number.ValueChangedHandle(this.number_ValueChanged);
             // 
@@ -235,7 +229,6 @@
             this.number7.Selected = false;
             this.number7.Size = new System.Drawing.Size(46, 79);
             this.number7.TabIndex = 6;
-            this.number7.Value = 0;
             this.number7.SelectedChanged += new NumberGamePlus.Components.Number.SelectedChangedHandle(this.number_SelectedChanged);
             this.number7.ValueChanged += new NumberGamePlus.Components.Number.ValueChangedHandle(this.number_ValueChanged);
             // 
