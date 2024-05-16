@@ -106,6 +106,15 @@ namespace NumberGamePlus
 
         private void submit_btn_Click(object sender, EventArgs e)
         {
+            void InitSelectedNumbers()
+            {
+                foreach (var n in equation.SelectedItems)
+                {
+                    n.InitNumber();
+                    n.Selected = false;
+                }
+                toolStripProgressBarTime.Value = 0;
+            }
             string ConnectNumbers(Number[] numbers)
                 => string.Concat(numbers.Select((l, i) => i == 0 ? l.Text : "+" + l.Text));
             if (equation.SelectedItems.Count() <= 0)
@@ -122,16 +131,33 @@ namespace NumberGamePlus
                         i.Select(j => equation.Numbers[j]).ToArray()) + "\n")));
                 return;
             }
-            // TODO: Add more detections
-            if (Algorithms.Algorithms.Check(equation))
+            var checkresult = Algorithms.Algorithms.Check(equation);
+            if (checkresult.ContainsNull)
             {
-                foreach (var n in equation.SelectedItems)
+                equation.InitNumbers();
+                equation.SelectedIndices = new int[] { };
+                return;
+            }
+            if ((bool)checkresult)
+            {
+                InitSelectedNumbers();
+                if (checkresult.ContainsDouble)
                 {
-                    n.InitNumber();
-                    n.Selected = false;
+                    Score += 2;
+                    return;
                 }
                 Score++;
-                toolStripProgressBarTime.Value = 0;
+                return;
+            }
+            if (checkresult.ContainsUnknown)
+            {
+                InitSelectedNumbers();
+                if (checkresult.ContainsDouble)
+                {
+                    Score -= 2;
+                    return;
+                }
+                Score--;
                 return;
             }
             if (equation.UncommonNumberSelected)
