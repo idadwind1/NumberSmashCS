@@ -101,77 +101,22 @@ namespace NumberGamePlus.Algorithms
             }
         }
 
-        public class CheckResult
+        public static bool Any0Possibilities(List<List<int>> possibilities)
         {
-            public bool Overall;
-            public bool ContainsInfinitives;
-            public bool ContainsDouble;
-            public bool ContainsUnknown;
-            public bool ContainsNull;
-
-            public CheckResult()
+            foreach (var poss in possibilities)
             {
-                ContainsNull = ContainsUnknown = ContainsDouble =
-                ContainsInfinitives = Overall = false;
+                var sum_poss = 0;
+                foreach (var num in poss)
+                    sum_poss += num;
+                if (sum_poss == 0)
+                    return true;
             }
-
-            public CheckResult(bool overall)
-            {
-                Overall = overall;
-            }
-
-            public CheckResult(bool overall, bool containsInfinitives, bool containsDouble, bool containsUnknown, bool containsNull) : this(overall)
-            {
-                ContainsInfinitives = containsInfinitives;
-                ContainsDouble = containsDouble;
-                ContainsUnknown = containsUnknown;
-                ContainsNull = containsNull;
-            }
-
-            public static explicit operator bool(CheckResult checkResult)
-            {
-                return checkResult.Overall;
-            }
+            return false;
         }
 
-        public static CheckResult Check(Equation equation)
+        public static List<List<int>> GetPossibilitiesOfSignums(int[] signums)
         {
-            if (!equation.UncommonNumberSelected)
-                return new CheckResult(equation.SelectedSum == 0);
-            var sum = 0;
             var possibilities = new List<List<int>>();
-            var signums = new List<int>();
-            var checkresult = new CheckResult();
-            foreach (var n in equation.SelectedItems)
-            {
-                switch (n.Value.Type)
-                {
-                    case NumberValue.NumberType.Common:
-                        sum += n.Value.Value;
-                        break;
-                    case NumberValue.NumberType.Signum:
-                        signums.Add(n.Value.Value);
-                        break;
-                    case NumberValue.NumberType.Infinitive:
-                        checkresult.Overall = true;
-                        checkresult.ContainsInfinitives = true;
-                        break;
-                    case NumberValue.NumberType.Double:
-                        checkresult.ContainsDouble = true;
-                        break;
-                    case NumberValue.NumberType.Unknown:
-                        checkresult.ContainsUnknown = true;
-                        break;
-                    case NumberValue.NumberType.Null:
-                        checkresult.ContainsNull = true;
-                        break;
-                    default:
-                        break;
-                }
-            }
-            if (signums.Count <= 0)
-                return checkresult;
-            possibilities.Add(new List<int>() { sum });
             foreach (var sgn in signums)
             {
                 var dup_possibilities = Clone(possibilities);
@@ -181,18 +126,7 @@ namespace NumberGamePlus.Algorithms
                     dup_poss.Add(-sgn);
                 possibilities.AddRange(dup_possibilities);
             }
-            foreach (var poss in possibilities)
-            {
-                var sum_poss = 0;
-                foreach (var num in poss)
-                    sum_poss += num;
-                if (sum_poss == 0)
-                {
-                    checkresult.Overall = true;
-                    return checkresult;
-                }
-            }
-            return checkresult;
+            return possibilities;
         }
     }
 }

@@ -49,7 +49,7 @@ namespace NumberGamePlus.Classes
                     return "[×2]";
                 if (Type == NumberType.Null)
                     return "Null";
-                return "";
+                return "NaN";
             }
             set => throw new ReadOnlyException();
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -131,7 +132,7 @@ namespace NumberGamePlus
                         i.Select(j => equation.Numbers[j]).ToArray()) + "\n")));
                 return;
             }
-            var checkresult = Algorithms.Algorithms.Check(equation);
+            var checkresult = equation.CheckedStatus;
             if (checkresult.ContainsNull)
             {
                 equation.InitNumbers();
@@ -223,11 +224,19 @@ namespace NumberGamePlus
             {
                 toolStripProgressBarSumAbs.Maximum = Math.Max(equation.MaxSum, Math.Abs(equation.MinSum));
                 var selected_sum = equation.SelectedSum;
+                // TODO: Rewrite progressbar code
                 if (equation.UncommonNumberSelected)
                 {
                     toolStripProgressBarSumAbs.Value = 0;
                     toolStripStatusLabelSumAbs.Text = "Sum: NaN";
                     toolStripStatusLabelSumAbs.ForeColor = Color.Red;
+                    return;
+                }
+                if (equation.IsSelected(Classes.NumberValue.NumberType.Infinitive))
+                {
+                    toolStripProgressBarSumAbs.Value = 0;
+                    toolStripStatusLabelSumAbs.Text = "Sum: ∞";
+                    toolStripStatusLabelSumAbs.ForeColor = Color.Green;
                     return;
                 }
                 if (selected_sum == int.MinValue)
@@ -504,6 +513,34 @@ namespace NumberGamePlus
                     "To Apply the change, you may need to reset the game by clicking the 'Reset' button in the Actions Bar",
                     "Tip", MessageBoxButtons.OK, MessageBoxIcon.Information);
             equation.ExtendedFeaturesToggle = extendedFeaturesToggleToolStripMenuItem.Checked;
+            Pause(false);
+        }
+
+        private void howtoplayToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            Pause(true);
+            MessageBox.Show("The rules are very simple. When the game lunches, there would be an equation of 7 numbers adding together. You would need to select numbers that added up to 0. For example, a simple 0 would be OK, or numbers like 1, -1, or even 1, 5, 3, 5, -7 -7. After this, the button that originally shows “Refresh” will turn to “Submit. You may click the button to submit the numbers. As long as the sum is 0, you will get 1 point, and the numbers will regenerate. \r\nBut if the sum is not 0, then you will lose the game. ",
+                "How To Play");
+            MessageBox.Show("When you think none of the numbers could added up to 0, you may deselect all numbers and then click “Refresh” to refresh the equation. The game will calculate if there is really no numbers could be selected. If yes, then the numbers will be refresh. If no, you will lose the game.",
+                "How To Play");
+            MessageBox.Show("If you want to restart the game, you may click the “Reset”button. And if you want to gain help, you may click the “Help” button, and the button will help you to find the numbers with sum of 0. There is a check box with label “Select All” for you to select or deselect all numbers instantly. To pause the game, you may check the check box with label “Pause”. Also, a timer will appear at the right corner. You score and used time of help appears at the upper of the timer.",
+                "How To Play");
+            MessageBox.Show("There are several options for better gaming experience. You can config the size of the font, or let the game to run at the very top of desktop in the menu strip labeled“View” at the top. You can let the game to show a small progress bar and display the sum of numbers by checking the “Show Sum” option in the “Option” menu strip at top. If you want the game to limit the time you submit, you can check the “Timing” option in the “Option” menu strip at top. For Windows users, you can check the “BSoD When Lose” option for more exciting gaming experiences. A message will pop up to tell you the detail of this option if you check it.",
+                "How To Play");
+            if (extendedFeaturesToggleToolStripMenuItem.Checked)
+            {
+                MessageBox.Show("Since you have enabled the “Extended Features Toggle”, here are the rules for the extended features. The game imported several special numbers into the game after the option was enabled.",
+                    "How To Play");
+                MessageBox.Show("- The Infinitive (∞) can literally be selected with any other numbers.\r\n- The Signum (±) can represent both positive or negative of the value. For example, (±5) can be selected with 5 to form a 0. Multiple Signums can be selected together.",
+                    "How To Play");
+                MessageBox.Show("- The Unknown (x) can hold one time of losing. For example, you selected 5, -1, and x. But -1 + 5 does not equals to 0. In regular case, you will lose the game. But with the Unknown, the game will only take you 1 points from the score instead of losing. The Unknown works once in one submit.",
+                    "How To Play");
+                MessageBox.Show("- The Double ([×2]) lets the score you gain to be double. For example, you are submitting 1, -1, [×2] results in two points of score. The Double could work with the Unknown, that you will lose two points instead of losing.\r\n- The Null (Null) helps you to refresh all the numbers without resetting the game.",
+                    "How To Play");
+            }
+            else
+                MessageBox.Show("For extended features, you may check the “Extended Features Toggle”. For more information about this option, you may use this help again after checking this option.",
+                "How To Play");
             Pause(false);
         }
     }

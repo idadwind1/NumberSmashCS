@@ -259,12 +259,13 @@
             this.howtoplayToolStripMenuItem1.Name = "howtoplayToolStripMenuItem1";
             this.howtoplayToolStripMenuItem1.Size = new System.Drawing.Size(174, 26);
             this.howtoplayToolStripMenuItem1.Text = "&How To Play";
+            this.howtoplayToolStripMenuItem1.Click += new System.EventHandler(this.howtoplayToolStripMenuItem1_Click);
             // 
             // authorToolStripMenuItem
             // 
             this.authorToolStripMenuItem.Name = "authorToolStripMenuItem";
             this.authorToolStripMenuItem.Size = new System.Drawing.Size(174, 26);
-            this.authorToolStripMenuItem.Text = "Author";
+            this.authorToolStripMenuItem.Text = "&Info";
             // 
             // tableLayoutPanel1
             // 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -41,7 +42,7 @@ namespace NumberGamePlus.Components
             }
         }
 
-        [Browsable(false), ReadOnly(true)]
+        [Browsable(false)]
         public Random RandomGenerator
         {
             get => _RandomGenerator;
@@ -58,7 +59,7 @@ namespace NumberGamePlus.Components
 
         private List<int> _SelectedIndices = new List<int>();
 
-        [Browsable(false), ReadOnly(true)]
+        [Browsable(false)]
         public int[] SelectedIndices
         {
             get => SelectedIndices;
@@ -72,7 +73,7 @@ namespace NumberGamePlus.Components
 
         private List<Number> _SelectedItems = new List<Number>();
 
-        [Browsable(false), ReadOnly(true)]
+        [Browsable(false)]
         public Number[] SelectedItems
         {
             get => _SelectedItems.ToArray();
@@ -88,7 +89,7 @@ namespace NumberGamePlus.Components
 
         private int _SelectedSum = int.MinValue;
 
-        [Browsable(false), ReadOnly(true)]
+        [Browsable(false)]
         public int SelectedSum
         {
             get
@@ -112,7 +113,7 @@ namespace NumberGamePlus.Components
 
         public event SelectedItemsChangedHandle SelectedItemsChanged;
 
-        private void _SelectedItemsChangedToggle()
+        private  void _SelectedItemsChangedToggle()
         {
             if (SelectedItemsChanged != null)
                 SelectedItemsChanged(this, EventArgs.Empty);
@@ -159,34 +160,71 @@ namespace NumberGamePlus.Components
                 _MinSum = _MaxSum = _Sum = 0;
             }
             _UncommonNumberSelected = false;
+            var selected_sum = 0;
+            var signums = new List<int>();
+            var checkstatus = new CheckedStatusClass();
             for (var i = 0; i < Numbers.Count; i++)
             {
                 n = Numbers[i];
                 n_value = n.Value;
-                if (n.Selected)
+                if (update_values)
                 {
-                    _SelectedItems.Add(n);
-                    _SelectedIndices.Add(i);
-                    _SelectedSum += n_value.Value;
-                    if (n_value.Type != NumberValue.NumberType.Common)
-                        _UncommonNumberSelected = true;
+                    _Values.Add(n_value);
+                    _Sum += n_value.Value;
+                    // TODO: Rewrite
+                    if (n_value.Value <= 0)
+                        _MinSum += n_value.Value;
+                    else
+                        _MaxSum += n_value.Value;
+                    //End
                 }
-                if (!update_values) continue;
-                _Values.Add(n_value);
-                _Sum += n_value.Value;
-                // TODO: Rewrite
-                if (n_value.Value <= 0)
-                    _MinSum += n_value.Value;
-                else
-                    _MaxSum += n_value.Value;
+                if (!n.Selected) continue;
+                _SelectedItems.Add(n);
+                _SelectedIndices.Add(i);
+                _SelectedSum += n_value.Value;
+                if (n_value.Type != NumberValue.NumberType.Common)
+                    _UncommonNumberSelected = true;
+                switch (n_value.Type)
+                {
+                    case NumberValue.NumberType.Common:
+                        selected_sum += n_value.Value;
+                        break;
+                    case NumberValue.NumberType.Signum:
+                        signums.Add(n_value.Value);
+                        break;
+                    case NumberValue.NumberType.Infinitive:
+                        checkstatus.Overall = true;
+                        checkstatus.ContainsInfinitives = true;
+                        break;
+                    case NumberValue.NumberType.Double:
+                        checkstatus.ContainsDouble = true;
+                        break;
+                    case NumberValue.NumberType.Unknown:
+                        checkstatus.ContainsUnknown = true;
+                        break;
+                    case NumberValue.NumberType.Null:
+                        checkstatus.ContainsNull = true;
+                        break;
+                    default:
+                        break;
+                }
             }
-            if (_SelectedIndices.Count <= 0)
-                _SelectedSum = int.MinValue;
+            if (!_UncommonNumberSelected)
+            {
+                checkstatus.Overall = selected_sum == 0;
+                _CheckStatus = checkstatus;
+                return;
+            }
+            if (signums.Count <= 0) return;
+            var possibilities = Algorithms.Algorithms.GetPossibilitiesOfSignums(signums.ToArray());
+            possibilities.Add(new List<int>() { selected_sum });
+            checkstatus.Overall = Algorithms.Algorithms.Any0Possibilities(possibilities);
+            _CheckStatus = checkstatus;
         }
 
         private bool _UncommonNumberSelected = false;
 
-        [Browsable(false), ReadOnly(true)]
+        [Browsable(false)]
         public bool UncommonNumberSelected
         {
             get => _UncommonNumberSelected;
@@ -195,7 +233,7 @@ namespace NumberGamePlus.Components
 
         private List<NumberValue> _Values = new List<NumberValue>();
 
-        [Browsable(false), ReadOnly(true)]
+        [Browsable(false)]
         public NumberValue[] Values
         {
             get => _Values.ToArray();
@@ -206,6 +244,15 @@ namespace NumberGamePlus.Components
                 Numbers.Zip(value, (n, v) => { n.Value = v; return n; });
                 _Values = value.ToList();
             }
+        }
+
+        private CheckedStatusClass _CheckStatus = new CheckedStatusClass();
+
+        [Browsable(false)]
+        public CheckedStatusClass CheckedStatus
+        {
+            get => _CheckStatus;
+            set => throw new ReadOnlyException();
         }
 
         private void Equation_KeyDown(object sender, KeyEventArgs e)
@@ -223,7 +270,7 @@ namespace NumberGamePlus.Components
 
         private int _Sum;
 
-        [Browsable(false), ReadOnly(true)]
+        [Browsable(false)]
         public int Sum
         {
             get
@@ -237,7 +284,7 @@ namespace NumberGamePlus.Components
 
         private int _MaxSum;
 
-        [Browsable(false), ReadOnly(true)]
+        [Browsable(false)]
         public int MaxSum
         {
             get => _MaxSum;
@@ -246,11 +293,25 @@ namespace NumberGamePlus.Components
 
         private int _MinSum;
 
-        [Browsable(false), ReadOnly(true)]
+        [Browsable(false)]
         public int MinSum
         {
             get => _MinSum;
             private set => throw new ReadOnlyException();
+        }
+
+        public struct CheckedStatusClass
+        {
+            public bool Overall;
+            public bool ContainsInfinitives;
+            public bool ContainsDouble;
+            public bool ContainsUnknown;
+            public bool ContainsNull;
+
+            public static explicit operator bool(CheckedStatusClass checkResult)
+            {
+                return checkResult.Overall;
+            }
         }
     }
 }
