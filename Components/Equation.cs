@@ -18,6 +18,10 @@ namespace NumberGamePlus.Components
         public Equation()
         {
             InitializeComponent();
+        }
+
+        private void UpdateNumbersAndPluses()
+        {
             foreach (var ctrl in tableLayoutPanel1.Controls)
             {
                 if (ctrl is Number number)
@@ -48,6 +52,7 @@ namespace NumberGamePlus.Components
             get => _RandomGenerator;
             set
             {
+                UpdateNumbersAndPluses();
                 if (value == null) return;
                 _RandomGenerator = value;
                 foreach (var number in Numbers)
