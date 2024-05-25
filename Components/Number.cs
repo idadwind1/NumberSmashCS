@@ -114,9 +114,9 @@ namespace NumberGamePlus.Components
             }
         }
 
-        private void Number_Resize(object sender, EventArgs e)
+        /*private void Number_Resize(object sender, EventArgs e)
         {
-            /*var lblWidth = Number_lbl.Width;
+            var lblWidth = Number_lbl.Width;
             if (lblWidth <= 0) return;
             var size = Number_lbl.Font.Size;
             Number_lbl.AutoSize = true;
@@ -136,8 +136,8 @@ namespace NumberGamePlus.Components
                 }
             Number_lbl.AutoSize = false;
             Number_lbl.Dock = DockStyle.Fill;
-            Number_lbl.Width = lblWidth;*/
-        }
+            Number_lbl.Width = lblWidth;
+        }*/
 
         public delegate void SelectedChangedHandle(object sender, EventArgs e);
 

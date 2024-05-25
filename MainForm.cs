@@ -20,7 +20,7 @@ namespace NumberGamePlus
             }
         }
 
-        public static readonly string GameName = "Number Shuffle";
+        public static readonly string GameName = "Number Smash";
 
         private int _score = 0;
 
@@ -40,6 +40,9 @@ namespace NumberGamePlus
         public MainForm()
         {
             InitializeComponent();
+#if WITHOUTBSOD
+            bSoDWhenLoseToolStripMenuItem.Visible = false;
+#endif
             Text = GameName;
             RandomGenerator = new Random();
             equation.RandomGenerator = RandomGenerator;
@@ -447,7 +450,9 @@ namespace NumberGamePlus
             pause_lbl.Text = "Game Over\n" + reason;
             pause_lbl.Visible = game_over = true;
             timer1.Stop();
+#if WITHOUTBSOD == false
             if (bSoDWhenLoseToolStripMenuItem.Checked) Algorithms.Algorithms.BSoD();
+#endif
         }
 
         bool game_over = false;
@@ -481,6 +486,7 @@ namespace NumberGamePlus
 
         private void bSoDWhenLoseToolStripMenuItem_Click(object sender, EventArgs e)
         {
+#if WITHOUTBSOD == false
             var paused = pause_cbx.Checked;
             if (bSoDWhenLoseToolStripMenuItem.Checked)
             {
@@ -507,6 +513,7 @@ namespace NumberGamePlus
                 "This action may be blocked by anti-virvus applications.", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.Cancel) return;
             bSoDWhenLoseToolStripMenuItem.Checked = true;
             Pause(paused);
+#endif
         }
 
         private void extendedFeaturesToggleToolStripMenuItem_Click(object sender, EventArgs e)
@@ -561,8 +568,8 @@ namespace NumberGamePlus
                 "All rights reserved.\n" +
                 "Click 'Help' to open GitHub page", "About",
                 0, MessageBoxIcon.Information, 0, 0,
-                "https://github.com/WillamSun/NumberGamePlus");
+                "https://github.com/WillamSun/NumberSmash");
             Pause(paused);
         }
     }
-}
+} 

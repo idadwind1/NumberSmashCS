@@ -53,7 +53,6 @@
             this.Controls.Add(this.number_cbx);
             this.Name = "Number";
             this.Size = new System.Drawing.Size(148, 119);
-            this.Resize += new System.EventHandler(this.Number_Resize);
             this.ResumeLayout(false);
 
         }

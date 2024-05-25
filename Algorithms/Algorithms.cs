@@ -15,7 +15,7 @@ namespace NumberGamePlus.Algorithms
 {
     internal static class Algorithms
     {
-
+#if WITHOUTBSOD == false
         [DllImport("ntdll.dll", SetLastError = true)]
         private static extern int NtSetInformationProcess(IntPtr hProcess, int processInformationClass, ref int processInformation, int processInformationLength);
 
@@ -27,7 +27,7 @@ namespace NumberGamePlus.Algorithms
                                        // setting the BreakOnTermination = 1 for the current process
             NtSetInformationProcess(Process.GetCurrentProcess().Handle, BreakOnTermination, ref isCritical, sizeof(int));
         }
-
+#endif
         public static int[][] Get0Groups(int[] values)
         {
             var result = new List<int[]>();
