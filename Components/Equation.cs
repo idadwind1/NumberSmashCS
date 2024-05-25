@@ -46,7 +46,7 @@ namespace NumberGamePlus.Components
             }
         }
 
-        [Browsable(false)]
+        [Browsable(false), ReadOnly(true)]
         public Random RandomGenerator
         {
             get => _RandomGenerator;
@@ -64,7 +64,8 @@ namespace NumberGamePlus.Components
 
         private List<int> _SelectedIndices = new List<int>();
 
-        [Browsable(false)]
+        [Browsable(false), ReadOnly(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int[] SelectedIndices
         {
             get => SelectedIndices;
@@ -78,7 +79,8 @@ namespace NumberGamePlus.Components
 
         private List<Number> _SelectedItems = new List<Number>();
 
-        [Browsable(false)]
+        [Browsable(false), ReadOnly(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Number[] SelectedItems
         {
             get => _SelectedItems.ToArray();
@@ -94,7 +96,8 @@ namespace NumberGamePlus.Components
 
         private int _SelectedSum = int.MinValue;
 
-        [Browsable(false)]
+        [Browsable(false), ReadOnly(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int SelectedSum
         {
             get
@@ -229,7 +232,8 @@ namespace NumberGamePlus.Components
 
         private bool _UncommonNumberSelected = false;
 
-        [Browsable(false)]
+        [Browsable(false), ReadOnly(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool UncommonNumberSelected
         {
             get => _UncommonNumberSelected;
@@ -238,7 +242,8 @@ namespace NumberGamePlus.Components
 
         private List<NumberValue> _Values = new List<NumberValue>();
 
-        [Browsable(false)]
+        [Browsable(false), ReadOnly(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public NumberValue[] Values
         {
             get => _Values.ToArray();
@@ -253,7 +258,8 @@ namespace NumberGamePlus.Components
 
         private CheckedStatusClass _CheckStatus = new CheckedStatusClass();
 
-        [Browsable(false)]
+        [Browsable(false), ReadOnly(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public CheckedStatusClass CheckedStatus
         {
             get => _CheckStatus;
@@ -275,7 +281,8 @@ namespace NumberGamePlus.Components
 
         private int _Sum;
 
-        [Browsable(false)]
+        [Browsable(false), ReadOnly(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int Sum
         {
             get
@@ -289,7 +296,8 @@ namespace NumberGamePlus.Components
 
         private int _MaxSum;
 
-        [Browsable(false)]
+        [Browsable(false), ReadOnly(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int MaxSum
         {
             get => _MaxSum;
@@ -298,7 +306,8 @@ namespace NumberGamePlus.Components
 
         private int _MinSum;
 
-        [Browsable(false)]
+        [Browsable(false), ReadOnly(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int MinSum
         {
             get => _MinSum;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
+using System.IO.Pipes;
 using System.Linq;
 using System.Windows.Forms;
 using NumberGamePlus.Components;
@@ -18,6 +19,8 @@ namespace NumberGamePlus
                 score_lbl.Text = value.ToString();
             }
         }
+
+        public static readonly string GameName = "Number Shuffle";
 
         private int _score = 0;
 
@@ -37,6 +40,7 @@ namespace NumberGamePlus
         public MainForm()
         {
             InitializeComponent();
+            Text = GameName;
             RandomGenerator = new Random();
             equation.RandomGenerator = RandomGenerator;
         }
@@ -477,6 +481,7 @@ namespace NumberGamePlus
 
         private void bSoDWhenLoseToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            var paused = pause_cbx.Checked;
             if (bSoDWhenLoseToolStripMenuItem.Checked)
             {
                 bSoDWhenLoseToolStripMenuItem.Checked = false;
@@ -488,7 +493,7 @@ namespace NumberGamePlus
             if (!principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator))
             {
                 MessageBox.Show("Please run this program as administrator before using this function", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Pause(false);
+                Pause(paused);
                 return;
             }
             if (MessageBox.Show("WARNING (Better read this): \n" +
@@ -501,11 +506,12 @@ namespace NumberGamePlus
                 "Click 'OK' to proceed. Before you lose, you can turn off this function whenever you regrets.\n" +
                 "This action may be blocked by anti-virvus applications.", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.Cancel) return;
             bSoDWhenLoseToolStripMenuItem.Checked = true;
-            Pause(false);
+            Pause(paused);
         }
 
         private void extendedFeaturesToggleToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            var paused = pause_cbx.Checked;
             Pause(true);
             if (extendedFeaturesToggleToolStripMenuItem.Checked)
                 MessageBox.Show("By checking this option, the game will enable the Extended Features," +
@@ -513,11 +519,12 @@ namespace NumberGamePlus
                     "To Apply the change, you may need to reset the game by clicking the 'Reset' button in the Actions Bar",
                     "Tip", MessageBoxButtons.OK, MessageBoxIcon.Information);
             equation.ExtendedFeaturesToggle = extendedFeaturesToggleToolStripMenuItem.Checked;
-            Pause(false);
+            Pause(paused);
         }
 
         private void howtoplayToolStripMenuItem1_Click(object sender, EventArgs e)
         {
+            var paused = pause_cbx.Checked;
             Pause(true);
             MessageBox.Show("The rules are very simple. When the game lunches, there would be an equation of 7 numbers adding together. You would need to select numbers that added up to 0. For example, a simple 0 would be OK, or numbers like 1, -1, or even 1, 5, 3, 5, -7 -7. After this, the button that originally shows “Refresh” will turn to “Submit. You may click the button to submit the numbers. As long as the sum is 0, you will get 1 point, and the numbers will regenerate. \r\nBut if the sum is not 0, then you will lose the game. ",
                 "How To Play");
@@ -541,7 +548,21 @@ namespace NumberGamePlus
             else
                 MessageBox.Show("For extended features, you may check the “Extended Features Toggle”. For more information about this option, you may use this help again after checking this option.",
                 "How To Play");
-            Pause(false);
+            Pause(paused);
+        }
+
+        private void authorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var paused = pause_cbx.Checked;
+            Pause(true);
+            MessageBox.Show(
+                GameName + "\n" +
+                "(C)opyright 2024 Idad Wind.\n" +
+                "All rights reserved.\n" +
+                "Click 'Help' to open GitHub page", "About",
+                0, MessageBoxIcon.Information, 0, 0,
+                "https://github.com/WillamSun/NumberGamePlus");
+            Pause(paused);
         }
     }
 }

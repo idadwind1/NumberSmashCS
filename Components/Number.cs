@@ -11,7 +11,8 @@ namespace NumberGamePlus.Components
 {
     public partial class Number : UserControl
     {
-        [Browsable(false)]
+        [Browsable(false), ReadOnly(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public override string Text
         {
             get => Value.ValueString;
@@ -20,7 +21,8 @@ namespace NumberGamePlus.Components
 
         private NumberValue _Value = new NumberValue();
 
-        [ReadOnly(true)]
+        [Browsable(false), ReadOnly(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public NumberValue Value
         {
             get => _Value;
