@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using NumberGamePlus.Classes;
+using NumberGamePlus.Algorithms;
 
 namespace NumberGamePlus.Components
 {
@@ -71,6 +72,8 @@ namespace NumberGamePlus.Components
             get => SelectedIndices;
             set
             {
+                foreach (var n in Numbers)
+                    n.Selected = false;
                 foreach (var i in value)
                     Numbers[i].Selected = true;
                 _SelectedIndices = value.ToList();
@@ -102,7 +105,7 @@ namespace NumberGamePlus.Components
         {
             get
             {
-                if (UncommonNumberSelected)
+                if (_CheckedStatus.ContainsUncommonNumber)
                     throw new Exception("Uncalculatable");
                 return _SelectedSum;
             }
@@ -167,10 +170,7 @@ namespace NumberGamePlus.Components
                 _Values.Clear();
                 _MinSum = _MaxSum = _Sum = 0;
             }
-            _UncommonNumberSelected = false;
-            var selected_sum = 0;
-            var signums = new List<int>();
-            var checkstatus = new CheckedStatusClass();
+            var SelectedNumberValues = new List<NumberValue>();
             for (var i = 0; i < Numbers.Count; i++)
             {
                 n = Numbers[i];
@@ -179,7 +179,7 @@ namespace NumberGamePlus.Components
                 {
                     _Values.Add(n_value);
                     _Sum += n_value.Value;
-                    // TODO: Rewrite
+                    // TODO: Rewrite with progressbar code
                     if (n_value.Value <= 0)
                         _MinSum += n_value.Value;
                     else
@@ -190,54 +190,9 @@ namespace NumberGamePlus.Components
                 _SelectedItems.Add(n);
                 _SelectedIndices.Add(i);
                 _SelectedSum += n_value.Value;
-                if (n_value.Type != NumberValue.NumberType.Common)
-                    _UncommonNumberSelected = true;
-                switch (n_value.Type)
-                {
-                    case NumberValue.NumberType.Common:
-                        selected_sum += n_value.Value;
-                        break;
-                    case NumberValue.NumberType.Signum:
-                        signums.Add(n_value.Value);
-                        break;
-                    case NumberValue.NumberType.Infinitive:
-                        checkstatus.Overall = true;
-                        checkstatus.ContainsInfinitives = true;
-                        break;
-                    case NumberValue.NumberType.Double:
-                        checkstatus.ContainsDouble = true;
-                        break;
-                    case NumberValue.NumberType.Unknown:
-                        checkstatus.ContainsUnknown = true;
-                        break;
-                    case NumberValue.NumberType.Null:
-                        checkstatus.ContainsNull = true;
-                        break;
-                    default:
-                        break;
-                }
+                SelectedNumberValues.Add(n_value);
             }
-            if (!_UncommonNumberSelected)
-            {
-                checkstatus.Overall = selected_sum == 0;
-                _CheckStatus = checkstatus;
-                return;
-            }
-            if (signums.Count <= 0) return;
-            var possibilities = Algorithms.Algorithms.GetPossibilitiesOfSignums(signums.ToArray());
-            possibilities.Add(new List<int>() { selected_sum });
-            checkstatus.Overall = Algorithms.Algorithms.Any0Possibilities(possibilities);
-            _CheckStatus = checkstatus;
-        }
-
-        private bool _UncommonNumberSelected = false;
-
-        [Browsable(false), ReadOnly(true)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public bool UncommonNumberSelected
-        {
-            get => _UncommonNumberSelected;
-            set => throw new ReadOnlyException();
+            _CheckedStatus = Algorithms.Algorithms.GetCheckedStatus(SelectedNumberValues.ToArray());
         }
 
         private List<NumberValue> _Values = new List<NumberValue>();
@@ -256,13 +211,13 @@ namespace NumberGamePlus.Components
             }
         }
 
-        private CheckedStatusClass _CheckStatus = new CheckedStatusClass();
+        private Algorithms.Algorithms.CheckedStatusClass _CheckedStatus = new Algorithms.Algorithms.CheckedStatusClass();
 
         [Browsable(false), ReadOnly(true)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public CheckedStatusClass CheckedStatus
+        public Algorithms.Algorithms.CheckedStatusClass CheckedStatus
         {
-            get => _CheckStatus;
+            get => _CheckedStatus;
             set => throw new ReadOnlyException();
         }
 
@@ -287,7 +242,7 @@ namespace NumberGamePlus.Components
         {
             get
             {
-                if (_UncommonNumberSelected)
+                if (_CheckedStatus.ContainsUncommonNumber)
                     throw new Exception("Uncalculatable");
                 return _Sum;
             }
@@ -312,20 +267,6 @@ namespace NumberGamePlus.Components
         {
             get => _MinSum;
             private set => throw new ReadOnlyException();
-        }
-
-        public struct CheckedStatusClass
-        {
-            public bool Overall;
-            public bool ContainsInfinitives;
-            public bool ContainsDouble;
-            public bool ContainsUnknown;
-            public bool ContainsNull;
-
-            public static explicit operator bool(CheckedStatusClass checkResult)
-            {
-                return checkResult.Overall;
-            }
         }
     }
 }

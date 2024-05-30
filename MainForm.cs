@@ -127,7 +127,7 @@ namespace NumberGamePlus
                 => string.Concat(numbers.Select((l, i) => i == 0 ? l.Text : "+" + l.Text));
             if (equation.SelectedItems.Count() <= 0)
             {
-                var suitable = Algorithms.Algorithms.Get0Groups(equation.Values.Select(v => v.Value).ToArray());
+                var suitable = Algorithms.Algorithms.Get0Groups(equation.Values.ToArray());
                 if (suitable.Length == 0)
                 {
                     equation.InitNumbers();
@@ -146,17 +146,6 @@ namespace NumberGamePlus
                 equation.SelectedIndices = new int[] { };
                 return;
             }
-            if ((bool)checkresult)
-            {
-                InitSelectedNumbers();
-                if (checkresult.ContainsDouble)
-                {
-                    Score += 2;
-                    return;
-                }
-                Score++;
-                return;
-            }
             if (checkresult.ContainsUnknown)
             {
                 InitSelectedNumbers();
@@ -168,7 +157,23 @@ namespace NumberGamePlus
                 Score--;
                 return;
             }
-            if (equation.UncommonNumberSelected)
+            if (checkresult.ContainsInfinitives)
+            {
+                InitSelectedNumbers();
+                return;
+            }
+            if (checkresult.Overall)
+            {
+                InitSelectedNumbers();
+                if (checkresult.ContainsDouble)
+                {
+                    Score += 2;
+                    return;
+                }
+                Score++;
+                return;
+            }
+            if (equation.CheckedStatus.ContainsUncommonNumber)
             {
                 Lose(string.Format("{0} ≠ 0",
                     ConnectNumbers(equation.SelectedItems)));
@@ -231,8 +236,8 @@ namespace NumberGamePlus
             {
                 toolStripProgressBarSumAbs.Maximum = Math.Max(equation.MaxSum, Math.Abs(equation.MinSum));
                 var selected_sum = equation.SelectedSum;
-                // TODO: Rewrite progressbar code
-                if (equation.UncommonNumberSelected)
+                // TODO: Rewrite progressbar code with extended features support
+                if (equation.CheckedStatus.ContainsUncommonNumber)
                 {
                     toolStripProgressBarSumAbs.Value = 0;
                     toolStripStatusLabelSumAbs.Text = "Sum: NaN";
@@ -263,7 +268,7 @@ namespace NumberGamePlus
 
         private void help_btn_Click(object sender, EventArgs e)
         {
-            var suitable = Algorithms.Algorithms.Get0Groups(equation.Values.Select(v => v.Value).ToArray());
+            var suitable = Algorithms.Algorithms.Get0Groups(equation.Values.ToArray());
             if (suitable.Length <= 0)
             {
                 ShowMessageBox("There is no solution!\nTry refresh", "No Solution", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -301,8 +306,6 @@ namespace NumberGamePlus
                 groupBoxActions,
                 pause_cbx,
                 menuStrip1,
-                groupBoxEquation,
-                pause_lbl,
                 statusStrip1
             };
             var exclusive_tsmi = new ToolStripMenuItem[]

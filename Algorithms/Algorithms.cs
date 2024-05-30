@@ -9,11 +9,10 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using NumberGamePlus.Classes;
-using NumberGamePlus.Components;
 
 namespace NumberGamePlus.Algorithms
 {
-    internal static class Algorithms
+    public static class Algorithms
     {
 #if WITHOUTBSOD == false
         [DllImport("ntdll.dll", SetLastError = true)]
@@ -28,7 +27,8 @@ namespace NumberGamePlus.Algorithms
             NtSetInformationProcess(Process.GetCurrentProcess().Handle, BreakOnTermination, ref isCritical, sizeof(int));
         }
 #endif
-        public static int[][] Get0Groups(int[] values)
+
+        public static int[][] Get0Groups(NumberValue[] values)
         {
             var result = new List<int[]>();
             for (var i = 1; i < values.Length; i++)
@@ -36,10 +36,12 @@ namespace NumberGamePlus.Algorithms
                 var list = PermutationCombinations(Enumerable.Range(0, values.Length).ToList(), i);
                 foreach (var ls in list)
                 {
-                    if (ls.Sum(n => values[n]) == 0)
-                    {
+                    var c_values = new List<NumberValue>();
+                    foreach (var l in ls)
+                        c_values.Add(values[l]);
+                    var value_status = GetCheckedStatus(c_values.ToArray());
+                    if (value_status.Overall)
                         result.Add(ls.ToArray());
-                    }
                 }
             }
             return result.ToArray();
@@ -101,32 +103,109 @@ namespace NumberGamePlus.Algorithms
             }
         }
 
-        public static bool Any0Possibilities(List<List<int>> possibilities)
+/*        public static List<int> Get0GroupsWithSignum(List<int> sgn, List<int> num)
         {
-            foreach (var poss in possibilities)
+            var result = new List<int>();
+            if (sgn.Count <= 0)
+                return new List<int> { num.Sum() };
+            if (sgn.Count == 1)
             {
-                var sum_poss = 0;
-                foreach (var num in poss)
-                    sum_poss += num;
-                if (sum_poss == 0)
-                    return true;
+                foreach (var n in num)
+                {
+                    result.Add(sgn[0] + n);
+                    result.Add(n - sgn[0]);
+                }
+                return result;
             }
-            return false;
+            var signum = sgn[0];
+            sgn.RemoveAt(0);
+            var res = Get0GroupsWithSignum(sgn, num);
+            foreach (var r in res)
+            {
+                result.Add(signum + r);
+                result.Add(r - signum);
+            }
+            return result;
+        }*/
+
+        public static List<int> Get0GroupsWithSignums(List<int> signums, List<int> numbers)
+        {
+            List<int> result = new List<int>() { numbers.Sum() };
+            foreach (var signum in signums)
+            {
+                List<int> dup_result = new List<int>(result);
+                for (var i = 0; i < result.Count(); i++)
+                    result[i] += signum;
+                for (var j = 0; j < dup_result.Count(); j++)
+                    dup_result[j] += -signum;
+                result.AddRange(dup_result);
+            }
+            return result;
         }
 
-        public static List<List<int>> GetPossibilitiesOfSignums(int[] signums)
+
+
+        public static CheckedStatusClass GetCheckedStatus(NumberValue[] numberValue)
         {
-            var possibilities = new List<List<int>>();
-            foreach (var sgn in signums)
+            var checkstatus = new CheckedStatusClass();
+            var selected_sum = 0;
+            var numbers = new List<int>();
+            var signums = new List<int>();
+            foreach (var n_value in numberValue)
             {
-                var dup_possibilities = Clone(possibilities);
-                foreach (var poss in possibilities)
-                    poss.Add(sgn);
-                foreach (var dup_poss in dup_possibilities)
-                    dup_poss.Add(-sgn);
-                possibilities.AddRange(dup_possibilities);
+
+                if (n_value.Type != NumberValue.NumberType.Common)
+                    checkstatus.ContainsUncommonNumber = true;
+                switch (n_value.Type)
+                {
+                    case NumberValue.NumberType.Common:
+                        selected_sum += n_value.Value;
+                        numbers.Add(n_value.Value);
+                        break;
+                    case NumberValue.NumberType.Signum:
+                        signums.Add(n_value.Value);
+                        break;
+                    case NumberValue.NumberType.Infinitive:
+                        checkstatus.ContainsInfinitives = true;
+                        break;
+                    case NumberValue.NumberType.Double:
+                        checkstatus.ContainsDouble = true;
+                        break;
+                    case NumberValue.NumberType.Unknown:
+                        checkstatus.ContainsUnknown = true;
+                        break;
+                    case NumberValue.NumberType.Null:
+                        checkstatus.ContainsNull = true;
+                        break;
+                    default:
+                        break;
+                }
             }
-            return possibilities;
+            if (!checkstatus.ContainsUncommonNumber)
+            {
+                checkstatus.Overall = selected_sum == 0;
+                return checkstatus;
+            }
+            if (signums.Count <= 0) return checkstatus;
+            checkstatus.Overall = Get0GroupsWithSignums(signums, numbers).Contains(0);
+            return checkstatus;
+        }
+
+
+
+        public struct CheckedStatusClass
+        {
+            public bool Overall;
+            public bool ContainsInfinitives;
+            public bool ContainsDouble;
+            public bool ContainsUnknown;
+            public bool ContainsNull;
+            public bool ContainsUncommonNumber;
+
+            public static explicit operator bool(CheckedStatusClass checkResult)
+            {
+                return checkResult.Overall;
+            }
         }
     }
 }
