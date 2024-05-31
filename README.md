@@ -32,7 +32,7 @@ There are two different releases of this game:
 - Without BSoD Release: Deletes the "BSoD After Losing" options
 
 ## Credits
-Presented by Idad Wind
+Presented by Idad Wind  
 Enjoy :)
 
 ## License
