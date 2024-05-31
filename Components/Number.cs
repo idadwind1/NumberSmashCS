@@ -67,9 +67,9 @@ namespace NumberGamePlus.Components
                 number_cbx.Text = Value.ValueString;
                 return;
             }
-            var possibilities = Enumerable.Repeat(0, 91).ToList();
+            var possibilities = Enumerable.Repeat(0, 90).ToList();
             possibilities.AddRange(Enumerable.Repeat(1, 5));
-            possibilities.AddRange(Enumerable.Range(2, 4));
+            possibilities.AddRange(Enumerable.Range(2, 5));
             var value = possibilities[RandomGenerator.Next(possibilities.Count)];
             switch (value)
             {
@@ -89,8 +89,11 @@ namespace NumberGamePlus.Components
                 case 4: //Unkown
                     numberType = NumberType.Unknown;
                     break;
-                case 5: //NaN
+                case 5: //Null
                     numberType = NumberType.Null;
+                    break;
+                case 6:
+                    numberType = NumberType.TimesZero;
                     break;
             }
             if (value >= 2)

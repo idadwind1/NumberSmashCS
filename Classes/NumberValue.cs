@@ -12,7 +12,8 @@ namespace NumberGamePlus.Classes
             Infinitive,
             Double,
             Unknown,
-            Null
+            Null,
+            TimesZero
         }
 
         public readonly NumberType Type = NumberType.Common;
@@ -34,22 +35,26 @@ namespace NumberGamePlus.Classes
         {
             get
             {
-                if (Type == NumberType.Common)
+                switch (Type)
                 {
-                    if (Value < 0) return string.Format("({0})", Value);
-                    return Value.ToString();
+                    case NumberType.Common:
+                        if (Value < 0) return string.Format("({0})", Value);
+                        return Value.ToString();
+                    case NumberType.Signum:
+                        return string.Format("(±{0})", Math.Abs(Value));
+                    case NumberType.Infinitive:
+                        return "∞";
+                    case NumberType.Double:
+                        return "[×2]";
+                    case NumberType.Unknown:
+                        return "x";
+                    case NumberType.Null:
+                        return "Null";
+                    case NumberType.TimesZero:
+                        return "[×0]";
+                    default:
+                        return "NaN";
                 }
-                if (Type == NumberType.Signum)
-                    return string.Format("(±{0})", Math.Abs(Value));
-                if (Type == NumberType.Infinitive)
-                    return "∞";
-                if (Type == NumberType.Unknown)
-                    return "x";
-                if (Type == NumberType.Double)
-                    return "[×2]";
-                if (Type == NumberType.Null)
-                    return "Null";
-                return "NaN";
             }
             set => throw new ReadOnlyException();
         }

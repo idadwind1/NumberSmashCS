@@ -128,7 +128,7 @@ namespace NumberGamePlus.Algorithms
             return result;
         }*/
 
-        public static List<int> Get0GroupsWithSignums(List<int> signums, List<int> numbers)
+        public static List<int> Get0GroupsWithSignums(int[] signums, int[] numbers)
         {
             List<int> result = new List<int>() { numbers.Sum() };
             foreach (var signum in signums)
@@ -148,7 +148,7 @@ namespace NumberGamePlus.Algorithms
         public static CheckedStatusClass GetCheckedStatus(NumberValue[] numberValue)
         {
             var checkstatus = new CheckedStatusClass();
-            var selected_sum = 0;
+            var sum = 0;
             var numbers = new List<int>();
             var signums = new List<int>();
             foreach (var n_value in numberValue)
@@ -159,11 +159,12 @@ namespace NumberGamePlus.Algorithms
                 switch (n_value.Type)
                 {
                     case NumberValue.NumberType.Common:
-                        selected_sum += n_value.Value;
+                        sum += n_value.Value;
                         numbers.Add(n_value.Value);
                         break;
                     case NumberValue.NumberType.Signum:
                         signums.Add(n_value.Value);
+                        checkstatus.ContainsSignums = true;
                         break;
                     case NumberValue.NumberType.Infinitive:
                         checkstatus.ContainsInfinitives = true;
@@ -177,35 +178,41 @@ namespace NumberGamePlus.Algorithms
                     case NumberValue.NumberType.Null:
                         checkstatus.ContainsNull = true;
                         break;
+                    case NumberValue.NumberType.TimesZero:
+                        checkstatus.Overall = true;
+                        checkstatus.ContainsTimesZero = true;
+                        break;
                     default:
                         break;
                 }
             }
+            checkstatus.Signums = signums.ToArray();
+            checkstatus.Numbers = numbers.ToArray();
             if (!checkstatus.ContainsUncommonNumber)
             {
-                checkstatus.Overall = selected_sum == 0;
+                checkstatus.Overall = sum == 0;
+                checkstatus.Possibilities = new int[] { sum };
                 return checkstatus;
             }
+            checkstatus.Possibilities = Get0GroupsWithSignums(checkstatus.Signums, checkstatus.Numbers).ToArray();
             if (signums.Count <= 0) return checkstatus;
-            checkstatus.Overall = Get0GroupsWithSignums(signums, numbers).Contains(0);
+            checkstatus.Overall = checkstatus.Possibilities.Contains(0);
             return checkstatus;
         }
-
-
 
         public struct CheckedStatusClass
         {
             public bool Overall;
+            public int[] Numbers;
+            public int[] Signums;
+            public int[] Possibilities;
+            public bool ContainsSignums;
             public bool ContainsInfinitives;
             public bool ContainsDouble;
             public bool ContainsUnknown;
             public bool ContainsNull;
+            public bool ContainsTimesZero;
             public bool ContainsUncommonNumber;
-
-            public static explicit operator bool(CheckedStatusClass checkResult)
-            {
-                return checkResult.Overall;
-            }
         }
     }
 }

@@ -103,21 +103,11 @@ namespace NumberGamePlus.Components
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int SelectedSum
         {
-            get
-            {
-                if (_CheckedStatus.ContainsUncommonNumber)
-                    throw new Exception("Uncalculatable");
-                return _SelectedSum;
-            }
+            get =>
+                /*if (_CheckedStatus.ContainsUncommonNumber)
+  throw new Exception("Uncalculatable");*/
+                _SelectedSum;
             private set => throw new ReadOnlyException();
-        }
-
-        public bool IsSelected(NumberValue.NumberType type)
-        {
-            foreach (var i in Numbers)
-                if (i.Value.Type == type)
-                    return true;
-            return false;
         }
 
         public delegate void SelectedItemsChangedHandle(object sender, EventArgs e);
@@ -162,7 +152,7 @@ namespace NumberGamePlus.Components
         {
             Number n;
             NumberValue n_value;
-            _SelectedSum = 0;
+            _SelectedSum = int.MinValue;
             _SelectedItems.Clear();
             _SelectedIndices.Clear();
             if (update_values)
@@ -180,17 +170,28 @@ namespace NumberGamePlus.Components
                     _Values.Add(n_value);
                     _Sum += n_value.Value;
                     // TODO: Rewrite with progressbar code
-                    if (n_value.Value <= 0)
-                        _MinSum += n_value.Value;
-                    else
+                    if (n_value.Type == NumberValue.NumberType.Common)
+                    {
+                        if (n_value.Value <= 0)
+                            _MinSum += n_value.Value;
+                        else
+                            _MaxSum += n_value.Value;
+                    }
+                    else if (n_value.Type == NumberValue.NumberType.Signum)
+                    {
+                        _MinSum -= n_value.Value;
                         _MaxSum += n_value.Value;
-                    //End
+                    }
                 }
                 if (!n.Selected) continue;
                 _SelectedItems.Add(n);
                 _SelectedIndices.Add(i);
-                _SelectedSum += n_value.Value;
                 SelectedNumberValues.Add(n_value);
+                if (n_value.Type == NumberValue.NumberType.Double)
+                    continue;
+                if (_SelectedSum == int.MinValue) _SelectedSum = 0;
+                if (n_value.Type == NumberValue.NumberType.Common)
+                    _SelectedSum += n_value.Value;
             }
             _CheckedStatus = Algorithms.Algorithms.GetCheckedStatus(SelectedNumberValues.ToArray());
         }

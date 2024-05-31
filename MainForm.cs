@@ -125,7 +125,7 @@ namespace NumberGamePlus
             }
             string ConnectNumbers(Number[] numbers)
                 => string.Concat(numbers.Select((l, i) => i == 0 ? l.Text : "+" + l.Text));
-            if (equation.SelectedItems.Count() <= 0)
+            if (equation.SelectedItems.Count() <= 0 || equation.SelectedSum == int.MinValue)
             {
                 var suitable = Algorithms.Algorithms.Get0Groups(equation.Values.ToArray());
                 if (suitable.Length == 0)
@@ -215,7 +215,7 @@ namespace NumberGamePlus
         private void equation_SelectedItemsChanged(object sender, EventArgs e)
         {
             var selected_items_length = equation.SelectedItems.Length;
-            if (selected_items_length == 0)
+            if (selected_items_length == 0 || equation.SelectedSum == int.MinValue)
             {
                 submitToolStripMenuItem.Text = submit_btn.Text = "Refre&sh";
                 selectAllToolStripMenuItem.Checked = select_all_cbx.Checked = false;
@@ -234,27 +234,48 @@ namespace NumberGamePlus
         {
             if (showSumToolStripMenuItem.Checked)
             {
-                toolStripProgressBarSumAbs.Maximum = Math.Max(equation.MaxSum, Math.Abs(equation.MinSum));
+                var checkedstatus = equation.CheckedStatus;
                 var selected_sum = equation.SelectedSum;
-                // TODO: Rewrite progressbar code with extended features support
-                if (equation.CheckedStatus.ContainsUncommonNumber)
+                toolStripProgressBarSumAbs.Maximum = Math.Max(equation.MaxSum, Math.Abs(equation.MinSum));
+                if (equation.SelectedItems.Length <= 0 || selected_sum == int.MinValue)
                 {
                     toolStripProgressBarSumAbs.Value = 0;
-                    toolStripStatusLabelSumAbs.Text = "Sum: NaN";
+                    toolStripStatusLabelSumAbs.Text = "Sum: None";
                     toolStripStatusLabelSumAbs.ForeColor = Color.Red;
                     return;
                 }
-                if (equation.IsSelected(Classes.NumberValue.NumberType.Infinitive))
+                // TODO: Rewrite progressbar code with extended features support
+                if (checkedstatus.ContainsInfinitives)
                 {
                     toolStripProgressBarSumAbs.Value = 0;
                     toolStripStatusLabelSumAbs.Text = "Sum: ∞";
                     toolStripStatusLabelSumAbs.ForeColor = Color.Green;
                     return;
                 }
-                if (selected_sum == int.MinValue)
+                if (checkedstatus.ContainsTimesZero)
                 {
                     toolStripProgressBarSumAbs.Value = 0;
-                    toolStripStatusLabelSumAbs.Text = "Sum: None";
+                    toolStripStatusLabelSumAbs.Text = "Sum: 0";
+                    toolStripStatusLabelSumAbs.ForeColor = Color.Green;
+                    return;
+                }
+                if (checkedstatus.ContainsSignums)
+                {
+                    var possibilities = checkedstatus.Possibilities;
+                    toolStripProgressBarSumAbs.Value = 0;
+                    toolStripStatusLabelSumAbs.Text = "Sum: " + string.Join(", ", possibilities);
+                    if (checkedstatus.Overall)
+                    {
+                        toolStripStatusLabelSumAbs.ForeColor = Color.Green;
+                        return;
+                    }
+                    toolStripStatusLabelSumAbs.ForeColor = Color.Red;
+                    return;
+                }
+                if (checkedstatus.ContainsUncommonNumber && !checkedstatus.ContainsDouble)
+                {
+                    toolStripProgressBarSumAbs.Value = 0;
+                    toolStripStatusLabelSumAbs.Text = "Sum: NaN";
                     toolStripStatusLabelSumAbs.ForeColor = Color.Red;
                     return;
                 }
@@ -526,7 +547,8 @@ namespace NumberGamePlus
             if (extendedFeaturesToggleToolStripMenuItem.Checked)
                 MessageBox.Show("By checking this option, the game will enable the Extended Features," +
                     "that offers more numbers to be adding into the game.\n" +
-                    "To Apply the change, you may need to reset the game by clicking the 'Reset' button in the Actions Bar",
+                    "To Apply the change, you may need to reset the game by clicking the 'Reset' button in the Actions Bar.\n" +
+                    "To get more help about the Extended Features Toggle, you may read the introduction in About -> How To Play",
                     "Tip", MessageBoxButtons.OK, MessageBoxIcon.Information);
             equation.ExtendedFeaturesToggle = extendedFeaturesToggleToolStripMenuItem.Checked;
             Pause(paused);
@@ -548,12 +570,13 @@ namespace NumberGamePlus
             {
                 MessageBox.Show("Since you have enabled the “Extended Features Toggle”, here are the rules for the extended features. The game imported several special numbers into the game after the option was enabled.",
                     "How To Play");
-                MessageBox.Show("- The Infinitive (∞) can literally be selected with any other numbers.\r\n- The Signum (±) can represent both positive or negative of the value. For example, (±5) can be selected with 5 to form a 0. Multiple Signums can be selected together.",
+                MessageBox.Show("- The Infinitive (∞) can literally be smashed with any other numbers, but using this does not count on score.\r\n- The Signum (±) can represent both positive or negative of the value. For example, (±5) can be selected with 5 to form a 0. Multiple Signums can be selected together.",
                     "How To Play");
                 MessageBox.Show("- The Unknown (x) can hold one time of losing. For example, you selected 5, -1, and x. But -1 + 5 does not equals to 0. In regular case, you will lose the game. But with the Unknown, the game will only take you 1 points from the score instead of losing. The Unknown works once in one submit.",
                     "How To Play");
                 MessageBox.Show("- The Double ([×2]) lets the score you gain to be double. For example, you are submitting 1, -1, [×2] results in two points of score. The Double could work with the Unknown, that you will lose two points instead of losing.\r\n- The Null (Null) helps you to refresh all the numbers without resetting the game.",
                     "How To Play");
+                MessageBox.Show("- The Multiplication of 0 ([×0]) has the same effect as the Infinitive, but in difference, using this counts on score. This could use with the Double, that gives twice points.");
             }
             else
                 MessageBox.Show("For extended features, you may check the “Extended Features Toggle”. For more information about this option, you may use this help again after checking this option.",
