@@ -15,7 +15,8 @@ Additionally, the game includes several optional advanced features that can enha
 - "Pause" checkbox to pause the game 
 - Timer that displays your score and time used
 - Options to adjust font size, make the game always on top, show a progress bar, and display the current sum
-There are more options in the menu strip at the top.
+
+More options can be found on the menu strip at the top.
 
 There are also several special number types that can be introduced by enabling the "Extended Features Toggle":
 
