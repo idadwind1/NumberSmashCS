@@ -148,18 +148,25 @@ namespace NumberGamePlus.Algorithms
         public static CheckedStatusClass GetCheckedStatus(NumberValue[] numberValue)
         {
             var checkstatus = new CheckedStatusClass();
-            var sum = 0;
+            var sum = int.MinValue;
             var numbers = new List<int>();
             var signums = new List<int>();
             foreach (var n_value in numberValue)
             {
 
                 if (n_value.Type != NumberValue.NumberType.Common)
+                {
                     checkstatus.ContainsUncommonNumber = true;
+                    if (n_value.Type != NumberValue.NumberType.Double && n_value.Type != NumberValue.NumberType.Null)
+                        checkstatus.ContainsIrregularNumber = true;
+                }
                 switch (n_value.Type)
                 {
                     case NumberValue.NumberType.Common:
-                        sum += n_value.Value;
+                        if (sum == int.MinValue)
+                            sum = n_value.Value;
+                        else
+                            sum += n_value.Value;
                         numbers.Add(n_value.Value);
                         break;
                     case NumberValue.NumberType.Signum:
@@ -188,8 +195,15 @@ namespace NumberGamePlus.Algorithms
             }
             checkstatus.Signums = signums.ToArray();
             checkstatus.Numbers = numbers.ToArray();
-            if (!checkstatus.ContainsUncommonNumber)
+            if (checkstatus.Overall) return checkstatus;
+            if (!checkstatus.ContainsIrregularNumber)
             {
+                if (sum == int.MinValue)
+                {
+                    checkstatus.Overall = false;
+                    checkstatus.Possibilities = new int[] { };
+                    return checkstatus;
+                }
                 checkstatus.Overall = sum == 0;
                 checkstatus.Possibilities = new int[] { sum };
                 return checkstatus;
@@ -213,6 +227,7 @@ namespace NumberGamePlus.Algorithms
             public bool ContainsNull;
             public bool ContainsTimesZero;
             public bool ContainsUncommonNumber;
+            public bool ContainsIrregularNumber;
         }
     }
 }

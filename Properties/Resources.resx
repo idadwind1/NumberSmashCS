@@ -117,8 +117,62 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ExtHelpLine1" xml:space="preserve">
+    <value>Since you have enabled the “Extended Features Toggle”, there are also several special number types that can be introduced by enabling the "Extended Features Toggle"</value>
+  </data>
+  <data name="ExtHelpLine2" xml:space="preserve">
+    <value>- Infinitive (∞) - Can be combined with any other number, but does not count towards your score
+- Signum (±) - Represents both positive and negative versions of a number
+- Unknown (x) - Allows you to avoid losing a point one time if the sum is not 0</value>
+  </data>
+  <data name="ExtHelpLine3" xml:space="preserve">
+    <value>- Double ([×2]) - Doubles your score when used
+Null - Refreshes the equation without resetting the game
+- Multiplication of 0 ([×0]) - Same as Infinitive, but counts towards your score</value>
+  </data>
+  <data name="GameName" xml:space="preserve">
+    <value>Number Smash</value>
+  </data>
+  <data name="HelpLine1" xml:space="preserve">
+    <value>The objective of the game is to select a set of numbers that add up to 0. When the game begins, it will present you with an equation containing 7 numbers. Your goal is to select one or more numbers from the equation that, when added together, equal 0.</value>
+  </data>
+  <data name="HelpLine2" xml:space="preserve">
+    <value>To play, simply click on the numbers you want to select. As long as the sum of the selected numbers is 0, you will earn 1 point and the equation will be refreshed with a new set of 7 numbers. If the sum of your selected numbers does not equal 0, you will lose the game.</value>
+  </data>
+  <data name="HelpLine3" xml:space="preserve">
+    <value>If you are unable to find a set of numbers that add up to 0, you can click the "Refresh" button to generate a new equation. The game will check if there is a valid solution before refreshing.</value>
+  </data>
+  <data name="HelpLine4" xml:space="preserve">
+    <value>To restart the game at any time, click the "Reset" button. You can also click the "Help" button to have the game automatically find a set of numbers that add up to 0.</value>
+  </data>
+  <data name="HelpLine5" xml:space="preserve">
+    <value>Additionally, the game includes several optional advanced features that can enhance the experience:
+- "Select All" checkbox to instantly select or deselect all numbers
+- "Pause" checkbox to pause the game
+- Timer that displays your score and time used</value>
+  </data>
+  <data name="HelpLine6" xml:space="preserve">
+    <value>- Options to adjust font size, make the game always on top, show a progress bar, and display the current sum There are more options in the menu strip at the top.
+More options can be found on the menu strip at the top.</value>
+  </data>
+  <data name="HelpLine7" xml:space="preserve">
+    <value>For extended features, you may check the “Extended Features Toggle”. For more information about this option, you may use this help again after checking this option.</value>
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TipForExtFea" xml:space="preserve">
+    <value>Checking this option will unlock additional gameplay features that allow you to play with more numbers in the game.
+Please note that enabling the Extended Features will require you to reset the game. You can do this by clicking the 'Reset' button in the Actions Bar.
+For more information about the Extended Features and how to use them, please refer to the 'How To Play' guide in the About section.</value>
+  </data>
+  <data name="WarnForBSoD" xml:space="preserve">
+    <value>WARNING: This feature creates an effect of Blue Screen of Death (BSoD) if you lose the game. However, this BSoD will not actually damage your operating system.
+If you see the simulated BSoD, simply restart your device. This will restore normal operation without any lasting harm.
+However, the BSoD may cause other software you have running to unexpectedly close. To minimize disruption, please make sure to save your work and close any other open applications before proceeding with the feature.
+You can disable this feature at any time if you change your mind about using it.
+Please note that this feature may be blocked by your antivirus software.
+By clicking "OK", you acknowledge that you have read and understand this warning. I am not responsible if you choose to proceed without taking the recommended precautions.</value>
   </data>
 </root>

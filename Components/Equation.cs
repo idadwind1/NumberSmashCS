@@ -169,7 +169,6 @@ namespace NumberGamePlus.Components
                 {
                     _Values.Add(n_value);
                     _Sum += n_value.Value;
-                    // TODO: Rewrite with progressbar code
                     if (n_value.Type == NumberValue.NumberType.Common)
                     {
                         if (n_value.Value <= 0)
