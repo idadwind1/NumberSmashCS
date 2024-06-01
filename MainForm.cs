@@ -20,7 +20,7 @@ namespace NumberGamePlus
             }
         }
 
-        public static readonly string GameName = "Number Smash";
+        public static readonly string GameName = NumberSmash.Properties.Resources.GameName;
 
         private int _score = 0;
 
@@ -341,10 +341,12 @@ namespace NumberGamePlus
                 showSumToolStripMenuItem,
                 aboutToolStripMenuItem,
                 howtoplayToolStripMenuItem1,
-                authorToolStripMenuItem
+                authorToolStripMenuItem,
+                timingToolStripMenuItem
             };
             SetEnabled(this, !toggle, exclusive);
             SetMenuStripEnabled(menuStrip1, !toggle, exclusive_tsmi, null);
+            toolStripTextBoxTiming.Enabled = true;
             pause_lbl.Visible = toggle;
             equation.Visible = !toggle;
             pause_cbx.Checked = toggle;
@@ -503,7 +505,19 @@ namespace NumberGamePlus
             if (timingToolStripMenuItem.Checked)
             {
                 toolStripProgressBarTime.Value = 0;
+                if (toolStripTextBoxTiming.Text == "") return;
                 int.TryParse(toolStripTextBoxTiming.Text, out timing);
+                if (timing <= 0)
+                {
+                    toolStripTextBoxTiming.Text = "10";
+                    timing = 10;
+                    var paused = pauseToolStripMenuItem.Checked;
+                    Pause(true);
+                    MessageBox.Show("The specific number is to large or to small!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Pause(paused);
+                    return;
+                }
+                toolStripStatusTime.Text = "Time Remaining: " + timing + "s";
                 toolStripProgressBarTime.Maximum = timing;
             }
         }
@@ -514,7 +528,7 @@ namespace NumberGamePlus
             var paused = pause_cbx.Checked;
             if (bSoDWhenLoseToolStripMenuItem.Checked)
             {
-                bSoDWhenLoseToolStripMenuItem.Checked = false;
+                toolStripStatusLabelBSoD.Visible = bSoDWhenLoseToolStripMenuItem.Checked = false;
                 return;
             }
             Pause(true);
@@ -526,16 +540,8 @@ namespace NumberGamePlus
                 Pause(paused);
                 return;
             }
-            if (MessageBox.Show("WARNING (Better read this): \n" +
-                "IN THIS SOFTWARE (that not all softwares are as kind as this), BSoD refers to " +
-                "'let the device to panic by making a manual error, but the action DOES NOT actually damage your OS'." +
-                "To restore, simply reboot your OS. Though it does nothing to your OS, you still need to opt wisely, due to this action " +
-                "MAY EFFECT the operation of other software by effort them to terminate!" +
-                "So in purpose of reduce damage, please save and quit other software running.\n" +
-                "IT IS NOT MY FAULT IF YOU DID NOT READ THIS.\n" +
-                "Click 'OK' to proceed. Before you lose, you can turn off this function whenever you regrets.\n" +
-                "This action may be blocked by anti-virvus applications.", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.Cancel) return;
-            bSoDWhenLoseToolStripMenuItem.Checked = true;
+            if (MessageBox.Show(NumberSmash.Properties.Resources.WarnForBSoD, "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.Cancel) return;
+            bSoDWhenLoseToolStripMenuItem.Checked = toolStripStatusLabelBSoD.Visible = true;
             Pause(paused);
 #endif
         }
@@ -543,14 +549,13 @@ namespace NumberGamePlus
         private void extendedFeaturesToggleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var paused = pause_cbx.Checked;
+            var check = extendedFeaturesToggleToolStripMenuItem.Checked;
             Pause(true);
-            if (extendedFeaturesToggleToolStripMenuItem.Checked)
-                MessageBox.Show("By checking this option, the game will enable the Extended Features," +
-                    "that offers more numbers to be adding into the game.\n" +
-                    "To Apply the change, you may need to reset the game by clicking the 'Reset' button in the Actions Bar.\n" +
-                    "To get more help about the Extended Features Toggle, you may read the introduction in About -> How To Play",
+            if (check)
+                MessageBox.Show(NumberSmash.Properties.Resources.TipForExtFea,
                     "Tip", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            equation.ExtendedFeaturesToggle = extendedFeaturesToggleToolStripMenuItem.Checked;
+            equation.ExtendedFeaturesToggle = check;
+            toolStripStatusLabelExtFea.Visible = check;
             Pause(paused);
         }
 
@@ -558,29 +563,15 @@ namespace NumberGamePlus
         {
             var paused = pause_cbx.Checked;
             Pause(true);
-            MessageBox.Show("The rules are very simple. When the game lunches, there would be an equation of 7 numbers adding together. You would need to select numbers that added up to 0. For example, a simple 0 would be OK, or numbers like 1, -1, or even 1, 5, 3, 5, -7 -7. After this, the button that originally shows “Refresh” will turn to “Submit. You may click the button to submit the numbers. As long as the sum is 0, you will get 1 point, and the numbers will regenerate. \r\nBut if the sum is not 0, then you will lose the game. ",
-                "How To Play");
-            MessageBox.Show("When you think none of the numbers could added up to 0, you may deselect all numbers and then click “Refresh” to refresh the equation. The game will calculate if there is really no numbers could be selected. If yes, then the numbers will be refresh. If no, you will lose the game.",
-                "How To Play");
-            MessageBox.Show("If you want to restart the game, you may click the “Reset”button. And if you want to gain help, you may click the “Help” button, and the button will help you to find the numbers with sum of 0. There is a check box with label “Select All” for you to select or deselect all numbers instantly. To pause the game, you may check the check box with label “Pause”. Also, a timer will appear at the right corner. You score and used time of help appears at the upper of the timer.",
-                "How To Play");
-            MessageBox.Show("There are several options for better gaming experience. You can config the size of the font, or let the game to run at the very top of desktop in the menu strip labeled“View” at the top. You can let the game to show a small progress bar and display the sum of numbers by checking the “Show Sum” option in the “Option” menu strip at top. If you want the game to limit the time you submit, you can check the “Timing” option in the “Option” menu strip at top. For Windows users, you can check the “BSoD When Lose” option for more exciting gaming experiences. A message will pop up to tell you the detail of this option if you check it.",
-                "How To Play");
+            for (var i = 1; i <= 6; i++)
+                MessageBox.Show(NumberSmash.Properties.Resources.
+                    ResourceManager.GetString("HelpLine" + i), "How To Play");
             if (extendedFeaturesToggleToolStripMenuItem.Checked)
-            {
-                MessageBox.Show("Since you have enabled the “Extended Features Toggle”, here are the rules for the extended features. The game imported several special numbers into the game after the option was enabled.",
-                    "How To Play");
-                MessageBox.Show("- The Infinitive (∞) can literally be smashed with any other numbers, but using this does not count on score.\r\n- The Signum (±) can represent both positive or negative of the value. For example, (±5) can be selected with 5 to form a 0. Multiple Signums can be selected together.",
-                    "How To Play");
-                MessageBox.Show("- The Unknown (x) can hold one time of losing. For example, you selected 5, -1, and x. But -1 + 5 does not equals to 0. In regular case, you will lose the game. But with the Unknown, the game will only take you 1 points from the score instead of losing. The Unknown works once in one submit.",
-                    "How To Play");
-                MessageBox.Show("- The Double ([×2]) lets the score you gain to be double. For example, you are submitting 1, -1, [×2] results in two points of score. The Double could work with the Unknown, that you will lose two points instead of losing.\r\n- The Null (Null) helps you to refresh all the numbers without resetting the game.",
-                    "How To Play");
-                MessageBox.Show("- The Multiplication of 0 ([×0]) has the same effect as the Infinitive, but in difference, using this counts on score. This could use with the Double, that gives twice points.");
-            }
+                for (var i = 1; i <= 3; i++)
+                    MessageBox.Show(NumberSmash.Properties.Resources.
+                        ResourceManager.GetString("ExtHelpLine" + i), "How To Play");
             else
-                MessageBox.Show("For extended features, you may check the “Extended Features Toggle”. For more information about this option, you may use this help again after checking this option.",
-                "How To Play");
+                MessageBox.Show(NumberSmash.Properties.Resources.HelpLine7, "How To Play");
             Pause(paused);
         }
 
