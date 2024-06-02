@@ -1,5 +1,7 @@
 # Number Smash, a simple number game
 
+![Icon](./img/title.png)
+
 ## Interface
 
 ![Interface](./img/interface.png)
